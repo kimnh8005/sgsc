@@ -1,0 +1,531 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.RiskTrhldManageDAO">
+
+	<insert id="insertRiskTrhldManage">
+		<![CDATA[
+			INSERT INTO tc_risk_trhld_manage (
+				trhld_sid
+				,target_id
+				,target_type_cd
+				,risk_type_id
+				,risk_step_cd
+				,trhld_ord
+				,start_risk_num
+				,close_risk_num
+				,risk_step_lvl
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			) VALUES (
+				#{trhld_sid}
+				,#{target_id}
+				,#{target_type_cd}
+				,#{risk_type_id}
+				,#{risk_step_cd}
+				,#{trhld_ord}
+				,#{start_risk_num}
+				,#{close_risk_num}
+				,#{risk_step_lvl}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regist_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+			)
+		]]>
+	</insert> 
+
+	<select id="getRiskTrhldManageKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(trhld_sid,2)),0) +1  ,9,'0'))
+			FROM tc_risk_trhld_manage
+		]]>
+	</select>
+
+	<delete id="deleteRiskTrhldManage">
+		<![CDATA[
+			DELETE FROM tc_risk_trhld_manage
+			WHERE trhld_sid = #{trhld_sid}
+		]]>
+	</delete>
+
+	<update id="updateRiskTrhldManage">
+		<![CDATA[
+			UPDATE tc_risk_trhld_manage
+			SET
+		]]>
+			<if test='trhld_sid != null and trhld_sid != ""'>trhld_sid = #{trhld_sid}</if>
+			<if test='target_id != null and target_id != ""'>,target_id = #{target_id}</if>
+			<if test='target_type_cd != null and target_type_cd != ""'>,target_type_cd = #{target_type_cd}</if>
+			<if test='risk_type_id != null and risk_type_id != ""'>,risk_type_id = #{risk_type_id}</if>
+			<if test='risk_step_cd != null and risk_step_cd != ""'>,risk_step_cd = #{risk_step_cd}</if>
+			<if test='risk_step_lvl != null and risk_step_lvl != ""'>,risk_step_lvl = #{risk_step_lvl}</if>
+			<if test='trhld_ord != null and trhld_ord != ""'>,trhld_ord = #{trhld_ord}</if>
+			<if test='start_risk_num != null and start_risk_num != ""'>,start_risk_num = #{start_risk_num}</if>
+			<if test='close_risk_num != null and close_risk_num != ""'>,close_risk_num = #{close_risk_num}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+		<![CDATA[
+			WHERE trhld_sid = #{trhld_sid}
+		]]>
+	</update>
+
+
+	<select id="listFactyRiskTrhld" resultType="hashmap">
+		<![CDATA[
+		SELECT
+			 a.facty_id,
+			 a.facty_nm,
+			 a.risk_type_nm,
+			 a.risk_type_id,
+			 CONCAT (MAX(dest_min_risk),'이상 ~ ',MAX(dest_max_risk),'이하') DGER,
+			 CONCAT (MAX(care_min_risk),'이상 ~ ',MAX(care_max_risk),'이하') CARE,
+			 CONCAT (MAX(warg_min_risk),'이상 ~ ',MAX(warg_max_risk),'이하') WARG,
+			 CONCAT (MAX(norl_min_risk),'이상 ~ ',MAX(norl_max_risk),'이하') NORL
+		FROM(
+		SELECT  
+			a.target_id facty_id,a.risk_type_id,
+			(SELECT t.FACTY_NM from tb_facility t WHERE t.FACTY_ID = a.target_id) facty_nm,
+		   (SELECT t.risk_type_nm from tc_risk_type t WHERE t.risk_type_id = a.risk_type_id) risk_type_nm,
+		   min(case when b.CD_ADD_ITM = 'DGER' then start_risk_num END) dest_min_risk,
+		   max(case when b.CD_ADD_ITM = 'DGER' then close_risk_num END) dest_max_risk,
+		   min(case when b.CD_ADD_ITM = 'CARE' then start_risk_num END) care_min_risk,
+		   max(case when b.CD_ADD_ITM = 'CARE' then close_risk_num END) care_max_risk,
+		   min(case when b.CD_ADD_ITM = 'WARG' then start_risk_num END) warg_min_risk,
+		   max(case when b.CD_ADD_ITM = 'WARG' then close_risk_num END) warg_max_risk,
+		   min(case when b.CD_ADD_ITM = 'NORL' then start_risk_num END) norl_min_risk,
+		   max(case when b.CD_ADD_ITM = 'NORL' then close_risk_num END) norl_max_risk
+		FROM tc_risk_trhld_manage a , tc_common_code b
+		WHERE a.target_type_cd='TT0001'
+		]]>
+			<if test='risk_type_id != null and risk_type_id != ""'>AND a.risk_type_id= #{risk_type_id}</if>
+		<![CDATA[
+		and b.cd_grp_id='risk_step_cd'
+		and a.risk_step_cd = b.cd_id
+		group by a.target_id ,a.target_id, a.risk_type_id
+		) a
+		GROUP BY a.facty_id,
+		 a.facty_nm,
+		 a.risk_type_nm,
+		 a.risk_type_id
+		]]>
+	</select>
+
+
+	<select id="getRiskTrhldManage_trhld_sid" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				trhld_sid
+				,target_id
+				,target_type_cd
+				,risk_type_id
+				,risk_step_cd
+				,trhld_ord
+				,start_risk_num
+				,close_risk_num
+				,risk_step_lvl
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,(SELECT t.trhld_ptn_cd FROM tc_risk_type t WHERE t.risk_type_id=a.risk_type_id) risk_type_nm 	
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='RISK_STEP_CD' AND t.cd_id = a.risk_step_cd) risk_step_nm
+			FROM tc_risk_trhld_manage a
+			WHERE trhld_sid = #{trhld_sid}
+		]]>
+	</select>
+	
+	
+	<select id="getCalcRiskTrhld" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				trhld_sid
+				,target_id
+				,target_type_cd
+				,risk_type_id
+				,risk_step_cd
+				,trhld_ord
+				,start_risk_num
+				,close_risk_num
+				,risk_step_lvl
+				,(SELECT t.trhld_ptn_cd FROM tc_risk_type t WHERE t.risk_type_id=a.risk_type_id) risk_type_nm 	
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='RISK_STEP_CD' AND t.cd_id = a.risk_step_cd) risk_step_nm
+			FROM tc_risk_trhld_manage a
+			WHERE target_type_cd = #{target_type_cd}
+			AND risk_type_id = #{risk_type_id}
+			AND target_id = #{target_id}
+			AND  start_risk_num <= #{risk_num}
+			AND  #{risk_num} <= close_risk_num
+		]]>
+	</select>
+	
+
+	<select id="listRiskTrhldManage" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				trhld_sid
+				,target_id
+				,target_type_cd
+				,risk_type_id
+				,risk_step_cd
+				,trhld_ord
+				,start_risk_num 
+				,close_risk_num
+				,risk_step_lvl
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,(SELECT t.trhld_ptn_cd FROM tc_risk_type t WHERE t.risk_type_id=a.risk_type_id) risk_type_nm 	
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='RISK_STEP_CD' AND t.cd_id = a.risk_step_cd) risk_step_nm
+			FROM tc_risk_trhld_manage a
+			WHERE 1=1
+		]]>
+		<if test='trhld_sid != null and trhld_sid != ""'>AND trhld_sid = #{trhld_sid}</if>
+		<if test='target_id != null and target_id != ""'>AND target_id = #{target_id}</if>
+		<if test='target_type_cd != null and target_type_cd != ""'>AND target_type_cd = #{target_type_cd}</if>
+		<if test='risk_type_id != null and risk_type_id != ""'>AND risk_type_id = #{risk_type_id}</if>
+		<if test='risk_step_cd != null and risk_step_cd != ""'>AND risk_step_cd = #{risk_step_cd}</if>
+		<if test='trhld_ord != null and trhld_ord != ""'>AND trhld_ord = #{trhld_ord}</if>
+		<if test='start_risk_num != null and start_risk_num != ""'>AND start_risk_num = #{start_risk_num}</if>
+		<if test='close_risk_num != null and close_risk_num != ""'>AND close_risk_num = #{close_risk_num}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+
+	<select id="pageRiskTrhldManage" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						trhld_sid
+						,target_id
+						,target_type_cd
+						,risk_type_id
+						,risk_step_cd
+						,risk_step_lvl
+						,trhld_ord
+						,start_risk_num
+						,close_risk_num
+						,regist_date
+						,regist_id
+						,update_date
+						,update_id
+						,(SELECT t.trhld_ptn_cd FROM tc_risk_type t WHERE t.risk_type_id=a.risk_type_id) risk_type_nm 	
+						,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='RISK_STEP_CD' AND t.cd_id = a.risk_step_cd) risk_step_nm
+					FROM tc_risk_trhld_manage a
+					WHERE 1 = 1 
+		]]>
+					<if test='trhld_sid != null and trhld_sid != ""'> AND trhld_sid = #{trhld_sid}</if>
+					<if test='target_id != null and target_id != ""'> AND target_id = #{target_id}</if>
+					<if test='target_type_cd != null and target_type_cd != ""'> AND target_type_cd = #{target_type_cd}</if>
+					<if test='risk_type_id != null and risk_type_id != ""'> AND risk_type_id = #{risk_type_id}</if>
+					<if test='risk_step_cd != null and risk_step_cd != ""'> AND risk_step_cd = #{risk_step_cd}</if>
+					<if test='trhld_ord != null and trhld_ord != ""'> AND trhld_ord = #{trhld_ord}</if>
+					<if test='start_risk_num != null and start_risk_num != ""'> AND start_risk_num = #{start_risk_num}</if>
+					<if test='close_risk_num != null and close_risk_num != ""'> AND close_risk_num = #{close_risk_num}</if>
+					<if test='regist_date != null and regist_date != ""'> AND regist_date = #{regist_date}</if>
+					<if test='regist_id != null and regist_id != ""'> AND regist_id = #{regist_id}</if>
+					<if test='update_date != null and update_date != ""'> AND update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND update_id = #{update_id}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countRiskTrhldManage" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tc_risk_trhld_manage
+			WHERE 1 = 1 
+		]]>
+		<if test='trhld_sid != null and trhld_sid != ""'>AND trhld_sid = #{trhld_sid}</if>
+		<if test='target_id != null and target_id != ""'>AND target_id = #{target_id}</if>
+		<if test='target_type_cd != null and target_type_cd != ""'>AND target_type_cd = #{target_type_cd}</if>
+		<if test='risk_type_id != null and risk_type_id != ""'>AND risk_type_id = #{risk_type_id}</if>
+		<if test='risk_step_cd != null and risk_step_cd != ""'>AND risk_step_cd = #{risk_step_cd}</if>
+		<if test='trhld_ord != null and trhld_ord != ""'>AND trhld_ord = #{trhld_ord}</if>
+		<if test='start_risk_num != null and start_risk_num != ""'>AND start_risk_num = #{start_risk_num}</if>
+		<if test='close_risk_num != null and close_risk_num != ""'>AND close_risk_num = #{close_risk_num}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+	
+	
+	
+	<select id="pageProcsRiskTrhld" resultType="hashmap">
+		<![CDATA[
+		SELECT
+			 a.facty_id,
+			 a.facty_nm,
+			 a.procs_id,
+			 a.procs_nm,
+			 a.risk_type_nm,
+			 a.risk_type_id,
+			 CONCAT (MAX(dest_min_risk),'이상 ~ ',MAX(dest_max_risk),'이하') DGER,
+			 CONCAT (MAX(care_min_risk),'이상 ~ ',MAX(care_max_risk),'이하') CARE,
+			 CONCAT (MAX(warg_min_risk),'이상 ~ ',MAX(warg_max_risk),'이하') WARG,
+			 CONCAT (MAX(norl_min_risk),'이상 ~ ',MAX(norl_max_risk),'이하') NORL
+		FROM(
+			SELECT  
+				a.risk_type_id,
+				c.procs_id,c.procs_nm, c.facty_id,c.facty_nm,
+			   (SELECT t.risk_type_nm from tc_risk_type t WHERE t.risk_type_id = a.risk_type_id) risk_type_nm,
+			   min(case when b.CD_ADD_ITM = 'DGER' then start_risk_num END) dest_min_risk,
+			   max(case when b.CD_ADD_ITM = 'DGER' then close_risk_num END) dest_max_risk,
+			   min(case when b.CD_ADD_ITM = 'CARE' then start_risk_num END) care_min_risk,
+			   max(case when b.CD_ADD_ITM = 'CARE' then close_risk_num END) care_max_risk,
+			   min(case when b.CD_ADD_ITM = 'WARG' then start_risk_num END) warg_min_risk,
+			   max(case when b.CD_ADD_ITM = 'WARG' then close_risk_num END) warg_max_risk,
+			   min(case when b.CD_ADD_ITM = 'NORL' then start_risk_num END) norl_min_risk,
+			   max(case when b.CD_ADD_ITM = 'NORL' then close_risk_num END) norl_max_risk
+			FROM tc_risk_trhld_manage a , tc_common_code b, vw_process c
+			WHERE a.TARGET_TYPE_CD='TT0002'
+			AND b.CD_GRP_ID='RISK_STEP_CD'
+			AND a.RISK_STEP_CD = b.CD_ID
+			AND a.target_id = c.procs_id
+			]]>
+			    <if test='facty_id != null and facty_id != ""'>AND c.facty_id= #{facty_id}</if>
+				<if test='risk_type_id != null and risk_type_id != ""'>AND a.risk_type_id= #{risk_type_id}</if>
+			<![CDATA[
+			GROUP BY a.target_id , a.risk_type_id, c.procs_id,c.procs_nm, c.facty_id,c.facty_nm
+		) a
+			GROUP BY a.facty_id,
+				 a.facty_nm,
+				 a.procs_id,
+				 a.procs_nm,
+				 a.risk_type_nm,
+				 a.risk_type_id
+	
+	]]>
+	</select>
+	
+	<select id="countProcsRiskTrhld" resultType="int">
+		<![CDATA[
+		SELECT
+			 count(1) 
+		FROM(
+			SELECT  
+				a.risk_type_id,
+				c.procs_id,c.procs_nm, c.facty_id,c.facty_nm,
+			   (SELECT t.risk_type_nm from tc_risk_type t WHERE t.risk_type_id = a.risk_type_id) risk_type_nm,
+			   min(case when b.CD_ADD_ITM = 'DGER' then start_risk_num END) dest_min_risk,
+			   max(case when b.CD_ADD_ITM = 'DGER' then close_risk_num END) dest_max_risk,
+			   min(case when b.CD_ADD_ITM = 'CARE' then start_risk_num END) care_min_risk,
+			   max(case when b.CD_ADD_ITM = 'CARE' then close_risk_num END) care_max_risk,
+			   min(case when b.CD_ADD_ITM = 'WARG' then start_risk_num END) warg_min_risk,
+			   max(case when b.CD_ADD_ITM = 'WARG' then close_risk_num END) warg_max_risk,
+			   min(case when b.CD_ADD_ITM = 'NORL' then start_risk_num END) norl_min_risk,
+			   max(case when b.CD_ADD_ITM = 'NORL' then close_risk_num END) norl_max_risk
+			FROM tc_risk_trhld_manage a , tc_common_code b, vw_process c
+			WHERE a.TARGET_TYPE_CD='TT0002'
+			AND b.CD_GRP_ID='RISK_STEP_CD'
+			AND a.RISK_STEP_CD = b.CD_ID
+			AND a.target_id = c.procs_id
+			]]>
+			    <if test='facty_id != null and facty_id != ""'>AND c.facty_id= #{facty_id}</if>
+				<if test='risk_type_id != null and risk_type_id != ""'>AND a.risk_type_id= #{risk_type_id}</if>
+			<![CDATA[
+			GROUP BY a.target_id , a.risk_type_id, c.procs_id,c.procs_nm, c.facty_id,c.facty_nm
+		) a
+	
+	]]>
+	</select>
+	
+	
+	<select id="pageEqmtRiskTrhld" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				 a.facty_id,
+				 a.facty_nm,
+				 a.procs_id,
+				 a.procs_nm,
+				 a.eqmt_id,
+				 a.eqmt_nm,
+				 a.risk_type_nm,
+				 a.risk_type_id,
+				 CONCAT (MAX(dest_min_risk),'이상 ~ ',MAX(dest_max_risk),'이하') DGER,
+				 CONCAT (MAX(care_min_risk),'이상 ~ ',MAX(care_max_risk),'이하') CARE,
+				 CONCAT (MAX(warg_min_risk),'이상 ~ ',MAX(warg_max_risk),'이하') WARG,
+				 CONCAT (MAX(norl_min_risk),'이상 ~ ',MAX(norl_max_risk),'이하') NORL
+			FROM(
+				SELECT  
+					a.risk_type_id,
+					c.procs_id,c.procs_nm, c.facty_id,c.facty_nm,c.eqmt_id,c.eqmt_nm,
+				   (SELECT t.risk_type_nm from tc_risk_type t WHERE t.risk_type_id = a.risk_type_id) risk_type_nm,
+				   min(case when b.CD_ADD_ITM = 'DGER' then start_risk_num END) dest_min_risk,
+				   max(case when b.CD_ADD_ITM = 'DGER' then close_risk_num END) dest_max_risk,
+				   min(case when b.CD_ADD_ITM = 'CARE' then start_risk_num END) care_min_risk,
+				   max(case when b.CD_ADD_ITM = 'CARE' then close_risk_num END) care_max_risk,
+				   min(case when b.CD_ADD_ITM = 'WARG' then start_risk_num END) warg_min_risk,
+				   max(case when b.CD_ADD_ITM = 'WARG' then close_risk_num END) warg_max_risk,
+				   min(case when b.CD_ADD_ITM = 'NORL' then start_risk_num END) norl_min_risk,
+				   max(case when b.CD_ADD_ITM = 'NORL' then close_risk_num END) norl_max_risk
+				FROM tc_risk_trhld_manage a , tc_common_code b, vw_equipment c
+				WHERE a.TARGET_TYPE_CD='TT0003'
+				AND b.CD_GRP_ID='RISK_STEP_CD'
+				AND a.RISK_STEP_CD = b.CD_ID
+				AND a.target_id = c.eqmt_id
+				]]>
+				    <if test='facty_id != null and facty_id != ""'>AND c.facty_id= #{facty_id}</if>
+				    <if test='procs_id != null and procs_id != ""'>AND c.procs_id= #{procs_id}</if>
+					<if test='risk_type_id != null and risk_type_id != ""'>AND a.risk_type_id= #{risk_type_id}</if>
+				<![CDATA[
+				GROUP BY a.target_id , a.risk_type_id, c.procs_id,c.procs_nm, c.facty_id,c.facty_nm,c.eqmt_id,c.eqmt_nm
+			) a
+			GROUP BY a.facty_id,
+				 a.facty_nm,
+				 a.procs_id,
+				 a.procs_nm,
+				 a.risk_type_nm,
+				 a.risk_type_id,
+				 a.eqmt_id,
+				 a.eqmt_nm
+	
+		]]>
+	</select>
+	
+	<select id="countEqmtRiskTrhld" resultType="int">
+		<![CDATA[
+			SELECT
+				 count(1) 
+			FROM(
+				SELECT  
+					a.risk_type_id,
+					c.procs_id,c.procs_nm, c.facty_id,c.facty_nm,c.eqmt_id,c.eqmt_nm,
+				   (SELECT t.risk_type_nm from tc_risk_type t WHERE t.risk_type_id = a.risk_type_id) risk_type_nm,
+				   min(case when b.CD_ADD_ITM = 'DGER' then start_risk_num END) dest_min_risk,
+				   max(case when b.CD_ADD_ITM = 'DGER' then close_risk_num END) dest_max_risk,
+				   min(case when b.CD_ADD_ITM = 'CARE' then start_risk_num END) care_min_risk,
+				   max(case when b.CD_ADD_ITM = 'CARE' then close_risk_num END) care_max_risk,
+				   min(case when b.CD_ADD_ITM = 'WARG' then start_risk_num END) warg_min_risk,
+				   max(case when b.CD_ADD_ITM = 'WARG' then close_risk_num END) warg_max_risk,
+				   min(case when b.CD_ADD_ITM = 'NORL' then start_risk_num END) norl_min_risk,
+				   max(case when b.CD_ADD_ITM = 'NORL' then close_risk_num END) norl_max_risk
+				FROM tc_risk_trhld_manage a , tc_common_code b, vw_equipment c
+				WHERE a.TARGET_TYPE_CD='TT0003'
+				AND b.CD_GRP_ID='RISK_STEP_CD'
+				AND a.RISK_STEP_CD = b.CD_ID
+				AND a.target_id = c.eqmt_id
+				]]>
+				    <if test='facty_id != null and facty_id != ""'>AND c.facty_id= #{facty_id}</if>
+				    <if test='procs_id != null and procs_id != ""'>AND c.procs_id= #{procs_id}</if>
+					<if test='risk_type_id != null and risk_type_id != ""'>AND a.risk_type_id= #{risk_type_id}</if>
+				<![CDATA[
+				GROUP BY a.target_id , a.risk_type_id, c.procs_id,c.procs_nm, c.facty_id,c.facty_nm,c.eqmt_id,c.eqmt_nm
+			) a
+		]]>
+	</select>
+	
+	
+	
+	
+	<select id="pageMeeqRiskTrhld" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				 a.facty_id,
+				 a.facty_nm,
+				 a.procs_id,
+				 a.procs_nm,
+				 a.eqmt_id,
+				 a.eqmt_nm,
+				 a.meeq_id,
+				 a.meeq_nm,
+				 a.risk_type_nm,
+				 a.risk_type_id,
+				 CONCAT (MAX(dest_min_risk),'이상 ~ ',MAX(dest_max_risk),'이하') DGER,
+				 CONCAT (MAX(care_min_risk),'이상 ~ ',MAX(care_max_risk),'이하') CARE,
+				 CONCAT (MAX(warg_min_risk),'이상 ~ ',MAX(warg_max_risk),'이하') WARG,
+				 CONCAT (MAX(norl_min_risk),'이상 ~ ',MAX(norl_max_risk),'이하') NORL
+			FROM(
+				SELECT  
+					a.risk_type_id,
+					c.procs_id,c.procs_nm, c.facty_id,c.facty_nm,c.eqmt_id,c.eqmt_nm, d.MEEQ_ID, d.meeq_nm,
+				   (SELECT t.risk_type_nm from tc_risk_type t WHERE t.risk_type_id = a.risk_type_id) risk_type_nm,
+				   min(case when b.CD_ADD_ITM = 'DGER' then start_risk_num END) dest_min_risk,
+				   max(case when b.CD_ADD_ITM = 'DGER' then close_risk_num END) dest_max_risk,
+				   min(case when b.CD_ADD_ITM = 'CARE' then start_risk_num END) care_min_risk,
+				   max(case when b.CD_ADD_ITM = 'CARE' then close_risk_num END) care_max_risk,
+				   min(case when b.CD_ADD_ITM = 'WARG' then start_risk_num END) warg_min_risk,
+				   max(case when b.CD_ADD_ITM = 'WARG' then close_risk_num END) warg_max_risk,
+				   min(case when b.CD_ADD_ITM = 'NORL' then start_risk_num END) norl_min_risk,
+				   max(case when b.CD_ADD_ITM = 'NORL' then close_risk_num END) norl_max_risk
+				FROM tc_risk_trhld_manage a , tc_common_code b, vw_equipment c , tb_eqmt_tag d
+				WHERE a.TARGET_TYPE_CD='TT0004'
+				AND b.CD_GRP_ID='RISK_STEP_CD'
+				AND a.RISK_STEP_CD = b.CD_ID
+				AND d.meeq_id = a.target_id
+				AND c.eqmt_id = d.EQMT_ID
+				]]>
+				    <if test='facty_id != null and facty_id != ""'>AND c.facty_id= #{facty_id}</if>
+				    <if test='procs_id != null and procs_id != ""'>AND c.procs_id= #{procs_id}</if>
+				    <if test='eqmt_id != null and eqmt_id != ""'>AND c.eqmt_id= #{eqmt_id}</if>
+					<if test='risk_type_id != null and risk_type_id != ""'>AND a.risk_type_id= #{risk_type_id}</if>
+				<![CDATA[
+				GROUP BY a.target_id , a.risk_type_id, c.procs_id,c.procs_nm, c.facty_id,c.facty_nm,c.eqmt_id,c.eqmt_nm, d.meeq_id,d.meeq_nm
+		) a
+			GROUP BY a.facty_id,
+				 a.facty_nm,
+				 a.procs_id,
+				 a.procs_nm,
+				 a.risk_type_nm,
+				 a.risk_type_id,
+				 a.eqmt_id,
+				 a.eqmt_nm,
+				 a.meeq_id,
+				 a.meeq_nm
+		]]>
+	</select>
+	
+	<select id="countMeeqRiskTrhld" resultType="int">
+		<![CDATA[
+			SELECT
+				 count(1) 
+			FROM(
+				SELECT  
+					a.risk_type_id,
+					c.procs_id,c.procs_nm, c.facty_id,c.facty_nm,c.eqmt_id,c.eqmt_nm, d.MEEQ_ID, d.meeq_nm,
+				   (SELECT t.risk_type_nm from tc_risk_type t WHERE t.risk_type_id = a.risk_type_id) risk_type_nm,
+				   min(case when b.CD_ADD_ITM = 'DGER' then start_risk_num END) dest_min_risk,
+				   max(case when b.CD_ADD_ITM = 'DGER' then close_risk_num END) dest_max_risk,
+				   min(case when b.CD_ADD_ITM = 'CARE' then start_risk_num END) care_min_risk,
+				   max(case when b.CD_ADD_ITM = 'CARE' then close_risk_num END) care_max_risk,
+				   min(case when b.CD_ADD_ITM = 'WARG' then start_risk_num END) warg_min_risk,
+				   max(case when b.CD_ADD_ITM = 'WARG' then close_risk_num END) warg_max_risk,
+				   min(case when b.CD_ADD_ITM = 'NORL' then start_risk_num END) norl_min_risk,
+				   max(case when b.CD_ADD_ITM = 'NORL' then close_risk_num END) norl_max_risk
+				FROM tc_risk_trhld_manage a , tc_common_code b, vw_equipment c , tb_eqmt_tag d
+				WHERE a.TARGET_TYPE_CD='TT0004'
+				AND b.CD_GRP_ID='RISK_STEP_CD'
+				AND a.RISK_STEP_CD = b.CD_ID
+				AND d.meeq_id = a.target_id
+				AND c.eqmt_id = d.EQMT_ID
+				]]>
+				    <if test='facty_id != null and facty_id != ""'>AND c.facty_id= #{facty_id}</if>
+				    <if test='procs_id != null and procs_id != ""'>AND c.procs_id= #{procs_id}</if>
+				    <if test='eqmt_id != null and eqmt_id != ""'>AND c.eqmt_id= #{eqmt_id}</if>
+					<if test='risk_type_id != null and risk_type_id != ""'>AND a.risk_type_id= #{risk_type_id}</if>
+				<![CDATA[
+				GROUP BY a.target_id , a.risk_type_id, c.procs_id,c.procs_nm, c.facty_id,c.facty_nm,c.eqmt_id,c.eqmt_nm, d.meeq_id,d.meeq_nm
+			) a
+		]]>
+	</select>
+	
+	
+	
+	
+</mapper>

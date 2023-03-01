@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.EqmtTagDAO">
+
+	<insert id="insertEqmtTag">
+		<![CDATA[
+			INSERT INTO tb_eqmt_tag (
+				meeq_id
+				,eqmt_id
+				,meag_mache_cd
+				,meeq_nm
+				,nickname
+				,description
+				,install_loc
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			) VALUES (
+				#{meeq_id}
+				,#{eqmt_id}
+				,#{meag_mache_cd}
+				,#{meeq_nm}
+				,#{nickname}
+				,#{description}
+				,#{install_loc}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regist_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+			)
+		]]>
+	</insert> 
+
+	<select id="getEqmtTagKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(meeq_id,2)),0) +1  ,9,'0'))
+			FROM tb_eqmt_tag
+		]]>
+	</select>
+
+	<delete id="deleteEqmtTag">
+		<![CDATA[
+			DELETE FROM tb_eqmt_tag
+			WHERE meeq_id = #{meeq_id}
+		]]>
+	</delete>
+
+	<update id="updateEqmtTag">
+		<![CDATA[
+			UPDATE tb_eqmt_tag
+			SET
+		]]>
+			<if test='meeq_id != null and meeq_id != ""'>meeq_id = #{meeq_id}</if>
+			<if test='eqmt_id != null and eqmt_id != ""'>,eqmt_id = #{eqmt_id}</if>
+			<if test='meag_mache_cd != null and meag_mache_cd != ""'>,meag_mache_cd = #{meag_mache_cd}</if>
+			<if test='meeq_nm != null and meeq_nm != ""'>,meeq_nm = #{meeq_nm}</if>
+			<if test='nickname != null and nickname != ""'>,nickname = #{nickname}</if>
+			<if test='description != null and description != ""'>,description = #{description}</if>
+			<if test='install_loc != null and install_loc != ""'>,install_loc = #{install_loc}</if>
+			 ,regist_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='regist_id != null and regist_id != ""'>,regist_id = #{regist_id}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+		<![CDATA[
+			WHERE meeq_id = #{meeq_id}
+		]]>
+	</update>
+
+	<select id="getEqmtTag_meeq_id" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				a.meeq_id
+				,a.eqmt_id
+				,b.procs_id
+				,b.facty_id
+				,b.procs_nm
+				,b.facty_nm
+				,b.eqmt_nm
+				,a.meag_mache_cd
+				,(SELECT 
+					c.CD_NM 
+				  FROM tc_common_code c 
+				  WHERE CD_GRP_ID='MEAG_MACHE_CD' 
+				  AND c.cd_id = a.meag_mache_cd) meag_mache_nm				
+				,a.meeq_nm
+				,a.nickname
+				,a.description
+				,a.install_loc
+				,a.regist_date
+				,a.regist_id
+				,a.update_date
+				,a.update_id
+			FROM tb_eqmt_tag a, vw_equipment b
+			WHERE a.eqmt_id = b.eqmt_id
+			AND a.meeq_id = #{meeq_id}
+		]]>
+	</select>
+
+	<select id="listEqmtTag" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				a.meeq_id
+				,a.eqmt_id
+				,b.procs_id
+				,b.facty_id
+				,b.procs_nm
+				,b.facty_nm
+				,b.eqmt_nm
+				,a.meag_mache_cd
+				,(SELECT 
+					c.CD_NM 
+				  FROM tc_common_code c 
+				  WHERE CD_GRP_ID='MEAG_MACHE_CD' 
+				  AND c.cd_id = a.meag_mache_cd) meag_mache_nm
+				,a.meeq_nm
+				,a.nickname
+				,a.description
+				,a.install_loc
+				,a.regist_date
+				,a.regist_id
+				,a.update_date
+				,a.update_id
+			FROM tb_eqmt_tag a, vw_equipment b
+			WHERE a.eqmt_id = b.eqmt_id
+		]]>
+		<if test='meeq_id != null and meeq_id != ""'>AND a.meeq_id = #{meeq_id}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND a.eqmt_id = #{eqmt_id}</if>
+		<if test='meag_mache_cd != null and meag_mache_cd != ""'>AND a.meag_mache_cd = #{meag_mache_cd}</if>
+		<if test='meeq_nm != null and meeq_nm != ""'>AND a.meeq_nm = #{meeq_nm}</if>
+		<if test='nickname != null and nickname != ""'>AND a.nickname = #{nickname}</if>
+		<if test='description != null and description != ""'>AND a.description = #{description}</if>
+		<if test='install_loc != null and install_loc != ""'>AND a.install_loc = #{install_loc}</if>
+	</select>
+
+	<select id="pageEqmtTag" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+					a.meeq_id
+					,a.eqmt_id
+					,b.procs_id
+					,b.facty_id
+					,b.procs_nm
+					,b.facty_nm
+					,b.eqmt_nm
+					,a.meag_mache_cd
+					,(SELECT 
+						c.CD_NM 
+					  FROM tc_common_code c 
+					  WHERE CD_GRP_ID='MEAG_MACHE_CD' 
+					  AND c.cd_id = a.meag_mache_cd) meag_mache_nm
+					,a.meeq_nm
+					,a.nickname
+					,a.description
+					,a.install_loc
+					,a.regist_date
+					,a.regist_id
+					,a.update_date
+					,a.update_id
+				FROM tb_eqmt_tag a, vw_equipment b
+				WHERE a.eqmt_id = b.eqmt_id
+		]]>
+					<if test='meeq_id != null and meeq_id != ""'>AND a.meeq_id = #{meeq_id}</if>
+					<if test='eqmt_id != null and eqmt_id != ""'>AND a.eqmt_id = #{eqmt_id}</if>
+					<if test='procs_id != null and procs_id != ""'> AND b.procs_id = #{procs_id}</if>
+					<if test='facty_id != null and facty_id != ""'> AND b.facty_id = #{facty_id}</if>
+					<if test='meag_mache_cd != null and meag_mache_cd != ""'>AND a.meag_mache_cd = #{meag_mache_cd}</if>
+					<if test='meeq_nm != null and meeq_nm != ""'>AND a.meeq_nm = #{meeq_nm}</if>
+					<if test='nickname != null and nickname != ""'>AND a.nickname = #{nickname}</if>
+					<if test='description != null and description != ""'>AND a.description = #{description}</if>
+					<if test='install_loc != null and install_loc != ""'>AND a.install_loc = #{install_loc}</if>
+		<![CDATA[
+					ORDER BY a.update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countEqmtTag" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tb_eqmt_tag a, vw_equipment b
+			WHERE a.eqmt_id = b.eqmt_id
+		]]>
+		<if test='meeq_id != null and meeq_id != ""'>AND a.meeq_id = #{meeq_id}</if>
+					<if test='eqmt_id != null and eqmt_id != ""'>AND a.eqmt_id = #{eqmt_id}</if>
+					<if test='procs_id != null and procs_id != ""'> AND b.procs_id = #{procs_id}</if>
+					<if test='facty_id != null and facty_id != ""'> AND b.facty_id = #{facty_id}</if>
+					<if test='meag_mache_cd != null and meag_mache_cd != ""'>AND a.meag_mache_cd = #{meag_mache_cd}</if>
+					<if test='meeq_nm != null and meeq_nm != ""'>AND a.meeq_nm = #{meeq_nm}</if>
+					<if test='nickname != null and nickname != ""'>AND a.nickname = #{nickname}</if>
+					<if test='description != null and description != ""'>AND a.description = #{description}</if>
+					<if test='install_loc != null and install_loc != ""'>AND a.install_loc = #{install_loc}</if>
+	</select>
+</mapper>

@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.NoticeDAO">
+
+	<insert id="insertNotice">
+		<![CDATA[
+			INSERT INTO tb_notice (
+				noti_sid
+				,noti_type_cd
+				,noti_title
+				,noti_cnt
+				,file_nm
+				,file_phy_nm
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			) VALUES (
+				#{noti_sid}
+				,#{noti_type_cd}
+				,#{noti_title}
+				,#{noti_cnt}
+				,#{file_nm}
+				,#{file_phy_nm}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regist_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+			)
+		]]>
+	</insert> 
+
+	<select id="getNoticeKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(noti_sid,2)),0) +1  ,9,'0'))
+			FROM tb_notice
+		]]>
+	</select>
+
+	<delete id="deleteNotice">
+		<![CDATA[
+			DELETE FROM tb_notice
+			WHERE noti_sid = #{noti_sid}
+		]]>
+	</delete>
+
+	<update id="updateNotice">
+		<![CDATA[
+			UPDATE tb_notice
+			SET
+		]]>
+			<if test='noti_sid != null and noti_sid != ""'>noti_sid = #{noti_sid}</if>
+			<if test='noti_type_cd != null and noti_type_cd != ""'>,noti_type_cd = #{noti_type_cd}</if>
+			<if test='noti_title != null and noti_title != ""'>,noti_title = #{noti_title}</if>
+			<if test='noti_cnt != null and noti_cnt != ""'>,noti_cnt = #{noti_cnt}</if>
+			<if test='file_nm != null and file_nm != ""'>,file_nm = #{file_nm}</if>
+			<if test='file_phy_nm != null and file_phy_nm != ""'>,file_phy_nm = #{file_phy_nm}</if>
+			 ,regist_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='regist_id != null and regist_id != ""'>,regist_id = #{regist_id}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+		<![CDATA[
+			WHERE noti_sid = #{noti_sid}
+		]]>
+	</update>
+
+	<select id="getNotice_noti_sid" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				noti_sid
+				,noti_type_cd
+				,noti_title
+				,noti_cnt
+				,file_nm
+				,file_phy_nm
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='NOTI_TYPE_CD' AND t.cd_id = a.noti_type_cd) noti_type_nm
+			FROM tb_notice a
+			WHERE noti_sid = #{noti_sid}
+		]]>
+	</select>
+	
+	
+	<select id="getPrevNotice_noti_sid" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				noti_sid
+				,noti_type_cd
+				,noti_title
+				,file_nm
+				,file_phy_nm
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='NOTI_TYPE_CD' AND t.cd_id = a.noti_type_cd) noti_type_nm
+			FROM tb_notice a
+			WHERE noti_sid = (SELECT MAX(noti_sid) pre_sid FROM tb_notice WHERE noti_sid < #{noti_sid})
+		]]>
+	</select>
+	
+	<select id="getNextNotice_noti_sid" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				noti_sid
+				,noti_type_cd
+				,noti_title
+				,file_nm
+				,file_phy_nm
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='NOTI_TYPE_CD' AND t.cd_id = a.noti_type_cd) noti_type_nm
+			FROM tb_notice a
+			WHERE noti_sid = (SELECT min(noti_sid) pre_sid FROM tb_notice WHERE noti_sid > #{noti_sid})
+		]]>
+	</select>
+	
+
+	<select id="listNotice" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				noti_sid
+				,noti_type_cd
+				,noti_title
+				,noti_cnt
+				,file_nm
+				,file_phy_nm
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='NOTI_TYPE_CD' AND t.cd_id = a.noti_type_cd) noti_type_nm
+			FROM tb_notice a
+			WHERE 1=1
+		]]>
+		<if test='noti_sid != null and noti_sid != ""'>AND noti_sid = #{noti_sid}</if>
+		<if test='noti_type_cd != null and noti_type_cd != ""'>AND noti_type_cd = #{noti_type_cd}</if>
+		<if test='noti_title != null and noti_title != ""'>AND noti_title like concat('%',#{noti_title},'%')</if>
+		<if test='noti_cnt != null and noti_cnt != ""'>AND noti_cnt like concat('%',#{noti_cnt},'%')</if>
+		<if test='file_nm != null and file_nm != ""'>AND file_nm = #{file_nm}</if>
+		<if test='file_phy_nm != null and file_phy_nm != ""'>AND file_phy_nm = #{file_phy_nm}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+
+	<select id="pageNotice" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						noti_sid
+						,noti_type_cd
+						,noti_title
+						,noti_cnt
+						,file_nm
+						,file_phy_nm
+						,regist_date
+						,regist_id
+						,update_date
+						,update_id
+						,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='NOTI_TYPE_CD' AND t.cd_id = a.noti_type_cd) noti_type_nm
+					FROM tb_notice a
+					WHERE 1 = 1 
+		]]>
+					<if test='noti_sid != null and noti_sid != ""'> AND noti_sid = #{noti_sid}</if>
+					<if test='noti_type_cd != null and noti_type_cd != ""'> AND noti_type_cd = #{noti_type_cd}</if>
+					<if test='noti_title != null and noti_title != ""'>AND noti_title like concat('%',#{noti_title},'%')</if>
+					<if test='noti_cnt != null and noti_cnt != ""'>AND noti_cnt like concat('%',#{noti_cnt},'%')</if>
+					<if test='file_nm != null and file_nm != ""'> AND file_nm = #{file_nm}</if>
+					<if test='file_phy_nm != null and file_phy_nm != ""'> AND file_phy_nm = #{file_phy_nm}</if>
+					<if test='regist_date != null and regist_date != ""'> AND regist_date = #{regist_date}</if>
+					<if test='regist_id != null and regist_id != ""'> AND regist_id = #{regist_id}</if>
+					<if test='update_date != null and update_date != ""'> AND update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND update_id = #{update_id}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countNotice" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tb_notice
+			WHERE 1 = 1 
+		]]>
+		<if test='noti_sid != null and noti_sid != ""'>AND noti_sid = #{noti_sid}</if>
+		<if test='noti_type_cd != null and noti_type_cd != ""'>AND noti_type_cd = #{noti_type_cd}</if>
+		<if test='noti_title != null and noti_title != ""'>AND noti_title like concat('%',#{noti_title},'%')</if>
+		<if test='noti_cnt != null and noti_cnt != ""'>AND noti_cnt like concat('%',#{noti_cnt},'%')</if>
+		<if test='file_nm != null and file_nm != ""'>AND file_nm = #{file_nm}</if>
+		<if test='file_phy_nm != null and file_phy_nm != ""'>AND file_phy_nm = #{file_phy_nm}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+</mapper>

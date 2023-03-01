@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.IndtmualDAO">
+
+	<insert id="insertIndtmual">
+		<![CDATA[
+			INSERT INTO tb_indtmual (
+				mual_sid
+				,mual_type_cd
+				,mual_title
+				,mual_cnt
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,file_nm
+				,file_phy_nm
+			) VALUES (
+				#{mual_sid}
+				,#{mual_type_cd}
+				,#{mual_title}
+				,#{mual_cnt}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regist_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+				,#{file_nm}
+				,#{file_phy_nm}
+			)
+		]]>
+	</insert> 
+
+	<select id="getIndtmualKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(mual_sid,2)),0) +1  ,9,'0'))
+			FROM tb_indtmual
+		]]>
+	</select>
+
+	<delete id="deleteIndtmual">
+		<![CDATA[
+			DELETE FROM tb_indtmual
+			WHERE mual_sid = #{mual_sid}
+		]]>
+	</delete>
+
+	<update id="updateIndtmual">
+		<![CDATA[
+			UPDATE tb_indtmual
+			SET
+		]]>
+			<if test='mual_sid != null and mual_sid != ""'>mual_sid = #{mual_sid}</if>
+			<if test='mual_type_cd != null and mual_type_cd != ""'>,mual_type_cd = #{mual_type_cd}</if>
+			<if test='mual_title != null and mual_title != ""'>,mual_title = #{mual_title}</if>
+			<if test='mual_cnt != null and mual_cnt != ""'>,mual_cnt = #{mual_cnt}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+			<if test='file_nm != null and file_nm != ""'>,file_nm = #{file_nm}</if>
+			<if test='file_phy_nm != null and file_phy_nm != ""'>,file_phy_nm = #{file_phy_nm}</if>
+		<![CDATA[
+			WHERE mual_sid = #{mual_sid}
+		]]>
+	</update>
+
+	<select id="getIndtmual_mual_sid" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				mual_sid
+				,mual_type_cd
+				,mual_title
+				,mual_cnt
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,file_nm
+				,file_phy_nm
+				,(select t.cd_nm from tc_common_code t where t.cd_grp_id='MUAL_TYPE_CD' and t.cd_id = a.mual_type_cd) mual_type_nm
+			FROM tb_indtmual a
+			WHERE mual_sid = #{mual_sid}
+		]]>
+	</select>
+	
+	<select id="getPrevIndtmual_mual_sid" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				mual_sid
+				,mual_type_cd
+				,mual_title
+				,mual_cnt
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,file_nm
+				,file_phy_nm
+				,(select t.cd_nm from tc_common_code t where t.cd_grp_id='MUAL_TYPE_CD' and t.cd_id = a.mual_type_cd) mual_type_nm
+			FROM tb_indtmual a
+			WHERE mual_sid = (SELECT MAX(mual_sid) pre_sid FROM tb_indtmual WHERE mual_sid < #{mual_sid})
+		]]>
+	</select>
+	
+	<select id="getNextIndtmual_mual_sid" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				mual_sid
+				,mual_type_cd
+				,mual_title
+				,mual_cnt
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,file_nm
+				,file_phy_nm
+				,(select t.cd_nm from tc_common_code t where t.cd_grp_id='MUAL_TYPE_CD' and t.cd_id = a.mual_type_cd) mual_type_nm
+			FROM tb_indtmual a
+			WHERE mual_sid = (SELECT min(mual_sid) pre_sid FROM tb_indtmual WHERE mual_sid > #{mual_sid})
+		]]>
+	</select>
+	
+
+	<select id="listIndtmual" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				mual_sid
+				,mual_type_cd
+				,mual_title
+				,mual_cnt
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,file_nm
+				,file_phy_nm
+				,(select t.cd_nm from tc_common_code t where t.cd_grp_id='MUAL_TYPE_CD' and t.cd_id = a.mual_type_cd) mual_type_nm
+			FROM tb_indtmual a
+			WHERE 1=1
+		]]>
+		<if test='mual_sid != null and mual_sid != ""'>AND mual_sid = #{mual_sid}</if>
+		<if test='mual_type_cd != null and mual_type_cd != ""'>AND mual_type_cd = #{mual_type_cd}</if>
+		<if test='mual_title != null and mual_title != ""'>AND mual_title like concat('%',#{mual_title},'%') </if>
+		<if test='mual_cnt != null and mual_cnt != ""'>AND mual_cnt like concat('%',#{mual_cnt},'%')</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+		<if test='file_nm != null and file_nm != ""'>AND file_nm = #{file_nm}</if>
+		<if test='file_phy_nm != null and file_phy_nm != ""'>AND file_phy_nm = #{file_phy_nm}</if>
+	</select>
+
+	<select id="pageIndtmual" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						mual_sid
+						,mual_type_cd
+						,mual_title
+						,mual_cnt
+						,regist_date
+						,regist_id
+						,update_date
+						,update_id
+						,file_nm
+						,file_phy_nm
+						,(select t.cd_nm from tc_common_code t where t.cd_grp_id='MUAL_TYPE_CD' and t.cd_id = a.mual_type_cd) mual_type_nm
+					FROM tb_indtmual a
+					WHERE 1 = 1 
+		]]>
+					<if test='mual_sid != null and mual_sid != ""'> AND mual_sid = #{mual_sid}</if>
+					<if test='mual_type_cd != null and mual_type_cd != ""'> AND mual_type_cd = #{mual_type_cd}</if>
+					<if test='mual_title != null and mual_title != ""'>AND mual_title like concat('%',#{mual_title},'%') </if>
+					<if test='mual_cnt != null and mual_cnt != ""'>AND mual_cnt like concat('%',#{mual_cnt},'%')</if>
+					<if test='regist_date != null and regist_date != ""'> AND regist_date = #{regist_date}</if>
+					<if test='regist_id != null and regist_id != ""'> AND regist_id = #{regist_id}</if>
+					<if test='update_date != null and update_date != ""'> AND update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND update_id = #{update_id}</if>
+					<if test='file_nm != null and file_nm != ""'> AND file_nm = #{file_nm}</if>
+					<if test='file_phy_nm != null and file_phy_nm != ""'> AND file_phy_nm = #{file_phy_nm}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countIndtmual" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tb_indtmual
+			WHERE 1 = 1 
+		]]>
+		<if test='mual_sid != null and mual_sid != ""'>AND mual_sid = #{mual_sid}</if>
+		<if test='mual_type_cd != null and mual_type_cd != ""'>AND mual_type_cd = #{mual_type_cd}</if>
+		<if test='mual_title != null and mual_title != ""'>AND mual_title like concat('%',#{mual_title},'%') </if>
+		<if test='mual_cnt != null and mual_cnt != ""'>AND mual_cnt like concat('%',#{mual_cnt},'%')</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+		<if test='file_nm != null and file_nm != ""'>AND file_nm = #{file_nm}</if>
+		<if test='file_phy_nm != null and file_phy_nm != ""'>AND file_phy_nm = #{file_phy_nm}</if>
+	</select>
+</mapper>

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.upo.UpoDAO">
+
+
+	<select id="get_transmitter_info" resultType="hashmap">
+		<![CDATA[		
+			SELECT
+				T3.TRANSMITTER_NM,
+				T3.TRANSMITTER_ID,
+				T3.DATE,
+				T3.STATUS,
+				T3.CONTENT,
+				(CASE 
+				 WHEN T3.CONTENT = '01' THEN '닫힘'
+				 WHEN T3.CONTENT = '02' THEN '열림'
+				ELSE '동작중'
+				END)CONTENT_NM
+			FROM	 
+				 (SELECT
+				 	(SELECT NAME FROM TB_TRANSMITTER_INFO WHERE T2.TRANSMITTER_ID = TRANSMITTER_ID) TRANSMITTER_NM ,
+					 T2.TRANSMITTER_ID, 
+					 T2.DATE,
+					 (SELECT STATUS FROM TB_CONTROL_INFO WHERE T2.DATE = DATE) STATUS,
+					 (SELECT CONTENT FROM TB_CONTROL_INFO WHERE T2.DATE = DATE) CONTENT
+				 FROM 
+				 (SELECT TRANSMITTER_ID, MAX(DATE) DATE
+				 FROM TB_CONTROL_INFO T1 
+				 GROUP BY TRANSMITTER_ID) T2)T3;
+		]]>
+	</select>
+	
+	<insert id="insertControlInfoStatus">
+		<![CDATA[
+			INSERT INTO TB_CONTROL_INFO (
+				NODE_ID,
+				TRANSMITTER_ID,
+				DATE,
+				CMD_ID,
+				CONTENT,
+				FULL_PACKET,
+				STATUS)	 
+			VALUES(
+			#{NODE_ID},
+			#{TRANSMITTER_ID},
+			#{DATE},
+			#{CMD_ID},
+			#{CONTENT},
+			#{FULL_PACKET},
+			#{STATUS}
+			)
+		]]>
+	</insert> 	
+</mapper>

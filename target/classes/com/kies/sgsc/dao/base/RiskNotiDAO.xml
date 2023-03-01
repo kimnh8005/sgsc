@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.RiskNotiDAO">
+
+	<insert id="insertRiskNoti" parameterType="HashMap">
+		<![CDATA[
+			INSERT INTO th_risk_noti (
+				eqmt_id
+				,procs_id
+				,facty_id
+				,send_type_cd
+				,send_stat_cd
+				,title
+				,risk_step_cd
+				,cbm_fixd_rate
+				,send_msg
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			) VALUES (
+				#{eqmt_id}
+				,#{procs_id}
+				,#{facty_id}
+				,#{send_type_cd}
+				,#{send_stat_cd}
+				,#{title}
+				,#{risk_step_cd}
+				,#{cbm_fixd_rate}
+				,#{send_msg}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regist_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+			)
+		]]>
+		<selectKey keyProperty="send_sid" resultType="Integer" order="AFTER">
+	        	SELECT LAST_INSERT_ID() as send_sid
+		</selectKey>
+	</insert> 
+
+	<select id="getRiskNotiKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(send_sid,2)),0) +1  ,9,'0'))
+			FROM th_risk_noti
+		]]>
+	</select>
+
+	<delete id="deleteRiskNoti">
+		<![CDATA[
+			DELETE FROM th_risk_noti
+			WHERE send_sid = #{send_sid}
+		]]>
+	</delete>
+
+	<update id="updateRiskNoti">
+		<![CDATA[
+			UPDATE th_risk_noti
+			SET
+		]]>
+			<if test='send_sid != null and send_sid != ""'>send_sid = #{send_sid}</if>
+			<if test='eqmt_id != null and eqmt_id != ""'>,eqmt_id = #{eqmt_id}</if>
+			<if test='procs_id != null and procs_id != ""'>,procs_id = #{procs_id}</if>
+			<if test='facty_id != null and facty_id != ""'>,facty_id = #{facty_id}</if>
+			<if test='send_type_cd != null and send_type_cd != ""'>,send_type_cd = #{send_type_cd}</if>
+			<if test='send_stat_cd != null and send_stat_cd != ""'>,send_stat_cd = #{send_stat_cd}</if>
+			<if test='title != null and title != ""'>,title = #{title}</if>
+			<if test='risk_step_cd != null and risk_step_cd != ""'>,risk_step_cd = #{risk_step_cd}</if>
+			<if test='cbm_fixd_rate != null and cbm_fixd_rate != ""'>,cbm_fixd_rate = #{cbm_fixd_rate}</if>
+			<if test='send_msg != null and send_msg != ""'>,send_msg = #{send_msg}</if>
+			 ,regist_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='regist_id != null and regist_id != ""'>,regist_id = #{regist_id}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+		<![CDATA[
+			WHERE send_sid = #{send_sid}
+		]]>
+	</update>
+
+	<select id="getRiskNoti_send_sid" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				DATE_FORMAT(regist_date, "%Y%m%d") send_ymd
+		 		,DATE_FORMAT(regist_date, "%H:%i") send_hi
+		 		,DATE_FORMAT(regist_date, "%Y%m%d%H%i%s") send_ymdhis
+				,send_sid
+				,eqmt_id
+				,(SELECT eqmt_nm FROM tb_equipment b WHERE b.eqmt_id = a.eqmt_id) eqmt_nm
+				,procs_id
+				,(SELECT procs_nm FROM tb_process c WHERE c.procs_id = a.procs_id) procs_nm
+				,facty_id
+				,(SELECT facty_nm FROM tb_facility d WHERE d.facty_id = a.facty_id) facty_nm
+				,send_type_cd
+				,(select 
+							e.cd_nm 
+					from tc_common_code e 
+					WHERE cd_grp_id='SEND_TYPE_CD' 
+					AND e.cd_id = a.send_type_cd)  send_type_nm
+				,send_stat_cd
+				,(select 
+							e.cd_nm 
+					from tc_common_code e 
+					WHERE cd_grp_id='SEND_STAT_CD' 
+					AND e.cd_id = a.send_stat_cd)  send_stat_nm
+				,title
+				,risk_step_cd
+				,(select 
+							e.cd_nm 
+					from tc_common_code e 
+					WHERE cd_grp_id='RISK_STEP_CD' 
+					AND e.cd_id = a.risk_step_cd)  risk_step_nm
+				,cbm_fixd_rate
+				,send_msg
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			FROM th_risk_noti a 
+			WHERE send_sid = #{send_sid}
+		]]>
+	</select>
+
+	<select id="listRiskNoti" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				DATE_FORMAT(regist_date, "%Y%m%d") send_ymd
+		 		,DATE_FORMAT(regist_date, "%H:%i") send_hi
+		 		,DATE_FORMAT(regist_date, "%Y%m%d%H%i%s") send_ymdhis
+				,send_sid
+				,eqmt_id
+				,(SELECT eqmt_nm FROM tb_equipment b WHERE b.eqmt_id = a.eqmt_id) eqmt_nm
+				,procs_id
+				,(SELECT procs_nm FROM tb_process c WHERE c.procs_id = a.procs_id) procs_nm
+				,facty_id
+				,(SELECT facty_nm FROM tb_facility d WHERE d.facty_id = a.facty_id) facty_nm
+				,send_type_cd
+				,(select 
+							e.cd_nm 
+					from tc_common_code e 
+					WHERE cd_grp_id='SEND_TYPE_CD' 
+					AND e.cd_id = a.send_type_cd)  send_type_nm
+				,send_stat_cd
+				,(select 
+							e.cd_nm 
+					from tc_common_code e 
+					WHERE cd_grp_id='SEND_STAT_CD' 
+					AND e.cd_id = a.send_stat_cd)  send_stat_nm
+				,title
+				,risk_step_cd
+				,(select 
+							e.cd_nm 
+					from tc_common_code e 
+					WHERE cd_grp_id='RISK_STEP_CD' 
+					AND e.cd_id = a.risk_step_cd)  risk_step_nm
+				,cbm_fixd_rate
+				,send_msg
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			FROM th_risk_noti a
+			WHERE DATE_FORMAT(regist_date, "%Y%m%d") between #{strt_send_ymd} and #{end_send_ymd}
+		]]>
+		<if test='send_sid != null and send_sid != ""'>AND send_sid = #{send_sid}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND eqmt_id = #{eqmt_id}</if>
+		<if test='procs_id != null and procs_id != ""'>AND procs_id = #{procs_id}</if>
+		<if test='facty_id != null and facty_id != ""'>AND facty_id = #{facty_id}</if>
+		<if test='send_type_cd != null and send_type_cd != ""'>AND send_type_cd = #{send_type_cd}</if>
+		<if test='send_stat_cd != null and send_stat_cd != ""'>AND send_stat_cd = #{send_stat_cd}</if>
+		<if test='title != null and title != ""'>AND title = #{title}</if>
+		<if test='risk_step_cd != null and risk_step_cd != ""'>AND risk_step_cd = #{risk_step_cd}</if>
+		<if test='cbm_fixd_rate != null and cbm_fixd_rate != ""'>AND cbm_fixd_rate = #{cbm_fixd_rate}</if>
+		<if test='send_msg != null and send_msg != ""'>AND send_msg = #{send_msg}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+		
+		
+	</select>
+
+	<select id="pageRiskNoti" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						DATE_FORMAT(regist_date, "%Y%m%d") send_ymd
+				 		,DATE_FORMAT(regist_date, "%H:%i") send_hi
+				 		,DATE_FORMAT(regist_date, "%Y%m%d%H%i%s") send_ymdhis
+						,send_sid
+						,eqmt_id
+						,(SELECT eqmt_nm FROM tb_equipment b WHERE b.eqmt_id = a.eqmt_id) eqmt_nm
+						,procs_id
+						,(SELECT procs_nm FROM tb_process c WHERE c.procs_id = a.procs_id) procs_nm
+						,facty_id
+						,(SELECT facty_nm FROM tb_facility d WHERE d.facty_id = a.facty_id) facty_nm
+						,send_type_cd
+						,(select 
+									e.cd_nm 
+							from tc_common_code e 
+							WHERE cd_grp_id='SEND_TYPE_CD' 
+							AND e.cd_id = a.send_type_cd)  send_type_nm
+						,send_stat_cd
+						,(select 
+									e.cd_nm 
+							from tc_common_code e 
+							WHERE cd_grp_id='SEND_STAT_CD' 
+							AND e.cd_id = a.send_stat_cd)  send_stat_nm
+						,title
+						,risk_step_cd
+						,(select 
+									e.cd_nm 
+							from tc_common_code e 
+							WHERE cd_grp_id='RISK_STEP_CD' 
+							AND e.cd_id = a.risk_step_cd)  risk_step_nm
+						,cbm_fixd_rate
+						,send_msg
+						,regist_date
+						,regist_id
+						,update_date
+						,update_id
+					FROM th_risk_noti  a
+					WHERE DATE_FORMAT(regist_date, "%Y%m%d") between #{strt_send_ymd} and #{end_send_ymd}
+		]]>
+					<if test='send_sid != null and send_sid != ""'> AND send_sid = #{send_sid}</if>
+					<if test='eqmt_id != null and eqmt_id != ""'> AND eqmt_id = #{eqmt_id}</if>
+					<if test='procs_id != null and procs_id != ""'> AND procs_id = #{procs_id}</if>
+					<if test='facty_id != null and facty_id != ""'> AND facty_id = #{facty_id}</if>
+					<if test='send_type_cd != null and send_type_cd != ""'> AND send_type_cd = #{send_type_cd}</if>
+					<if test='send_stat_cd != null and send_stat_cd != ""'> AND send_stat_cd = #{send_stat_cd}</if>
+					<if test='title != null and title != ""'> AND title = #{title}</if>
+					<if test='risk_step_cd != null and risk_step_cd != ""'> AND risk_step_cd = #{risk_step_cd}</if>
+					<if test='cbm_fixd_rate != null and cbm_fixd_rate != ""'> AND cbm_fixd_rate = #{cbm_fixd_rate}</if>
+					<if test='send_msg != null and send_msg != ""'> AND send_msg = #{send_msg}</if>
+					<if test='regist_date != null and regist_date != ""'> AND regist_date = #{regist_date}</if>
+					<if test='regist_id != null and regist_id != ""'> AND regist_id = #{regist_id}</if>
+					<if test='update_date != null and update_date != ""'> AND update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND update_id = #{update_id}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countRiskNoti" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM th_risk_noti
+			WHERE DATE_FORMAT(regist_date, "%Y%m%d") between #{strt_send_ymd} and #{end_send_ymd}
+		]]>
+		<if test='send_sid != null and send_sid != ""'>AND send_sid = #{send_sid}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND eqmt_id = #{eqmt_id}</if>
+		<if test='procs_id != null and procs_id != ""'>AND procs_id = #{procs_id}</if>
+		<if test='facty_id != null and facty_id != ""'>AND facty_id = #{facty_id}</if>
+		<if test='send_type_cd != null and send_type_cd != ""'>AND send_type_cd = #{send_type_cd}</if>
+		<if test='send_stat_cd != null and send_stat_cd != ""'>AND send_stat_cd = #{send_stat_cd}</if>
+		<if test='title != null and title != ""'>AND title = #{title}</if>
+		<if test='risk_step_cd != null and risk_step_cd != ""'>AND risk_step_cd = #{risk_step_cd}</if>
+		<if test='cbm_fixd_rate != null and cbm_fixd_rate != ""'>AND cbm_fixd_rate = #{cbm_fixd_rate}</if>
+		<if test='send_msg != null and send_msg != ""'>AND send_msg = #{send_msg}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+</mapper>

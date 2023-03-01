@@ -1,0 +1,228 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.GasRiskPrpsDAO">
+
+	<insert id="insertGasRiskPrps">
+		<![CDATA[
+			INSERT INTO tb_gas_risk_prps (
+				props_sid
+				,props_ymdhis
+				,anys_ymdhi
+				,anys_sys_cd
+				,risk_type_id
+				,eqmt_id
+				,regst_date
+				,regst_id
+				,update_date
+				,update_id
+			) VALUES (
+				#{props_sid}
+				,#{props_ymdhis}
+				,#{anys_ymdhi}
+				,#{anys_sys_cd}
+				,#{risk_type_id}
+				,#{eqmt_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regst_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+			)
+		]]>
+	</insert> 
+
+	<select id="getGasRiskPrpsKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(props_sid,2)),0) +1  ,9,'0'))
+			FROM tb_gas_risk_prps
+		]]>
+	</select>
+
+	<delete id="deleteGasRiskPrps">
+		<![CDATA[
+			DELETE FROM tb_gas_risk_prps
+			WHERE props_sid = #{props_sid}
+		]]>
+	</delete>
+
+	<update id="updateGasRiskPrps">
+		<![CDATA[
+			UPDATE tb_gas_risk_prps
+			SET
+		]]>
+			<if test='props_sid != null and props_sid != ""'>props_sid = #{props_sid}</if>
+			<if test='props_ymdhis != null and props_ymdhis != ""'>,props_ymdhis = #{props_ymdhis}</if>
+			<if test='anys_ymdhi != null and anys_ymdhi != ""'>,anys_ymdhi = #{anys_ymdhi}</if>
+			<if test='anys_sys_cd != null and anys_sys_cd != ""'>,anys_sys_cd = #{anys_sys_cd}</if>
+			<if test='risk_type_id != null and risk_type_id != ""'>,risk_type_id = #{risk_type_id}</if>
+			<if test='eqmt_id != null and eqmt_id != ""'>,eqmt_id = #{eqmt_id}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+		<![CDATA[
+			WHERE props_sid = #{props_sid}
+		]]>
+	</update>
+
+	<select id="getGasRiskPrps_props_sid" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				a.props_sid
+				,a.props_ymdhis
+				,a.anys_ymdhi
+				,a.anys_sys_cd
+				,a.risk_type_id
+				,a.eqmt_id
+				,b.RISK_STEP_CD
+				,b.RISK_NUM
+				,b.RISK_UNIT
+				,c.facty_id
+				,c.facty_nm
+				,c.procs_id
+				,c.procs_nm
+				,c.eqmt_nm
+				,a.regst_date
+				,a.regst_id
+				,a.update_date
+				,a.update_id
+				${causequery}
+			FROM tb_gas_risk_prps a,th_eqmt_risk_anay_rtme_load_min b, vw_equipment c
+			WHERE a.anys_ymdhi = b.anys_ymdhi
+			and a.anys_sys_cd = b.anys_sys_cd
+			and a.risk_type_id = b.risk_type_id
+			and a.eqmt_id = b.eqmt_id
+			AND b.eqmt_id = c.eqmt_id
+			AND props_sid = #{props_sid}
+		]]>
+	</select>
+
+	<select id="listGasRiskPrps" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				a.props_sid
+				,a.props_ymdhis
+				,a.anys_ymdhi
+				,a.anys_sys_cd
+				,a.risk_type_id
+				,a.eqmt_id
+				,b.RISK_STEP_CD
+				,b.RISK_NUM
+				,b.RISK_UNIT
+				,c.facty_id
+				,c.facty_nm
+				,c.procs_id
+				,c.procs_nm
+				,c.eqmt_nm
+				,a.regst_date
+				,a.regst_id
+				,a.update_date
+				,a.update_id
+				${causequery}
+			FROM tb_gas_risk_prps a,th_eqmt_risk_anay_rtme_load_min b, vw_equipment c
+			WHERE a.anys_ymdhi = b.anys_ymdhi
+			and a.anys_sys_cd = b.anys_sys_cd
+			and a.risk_type_id = b.risk_type_id
+			and a.eqmt_id = b.eqmt_id
+			AND b.eqmt_id = c.eqmt_id
+		]]>
+		<if test='props_sid != null and props_sid != ""'>AND a.props_sid = #{props_sid}</if>
+		<if test='props_ymdhis != null and props_ymdhis != ""'>AND a.props_ymdhis = #{props_ymdhis}</if>
+		<if test='anys_ymdhi != null and anys_ymdhi != ""'>AND a.anys_ymdhi = #{anys_ymdhi}</if>
+		<if test='anys_sys_cd != null and anys_sys_cd != ""'>AND a.anys_sys_cd = #{anys_sys_cd}</if>
+		<if test='risk_type_id != null and risk_type_id != ""'>AND a.risk_type_id = #{risk_type_id}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND a.eqmt_id = #{eqmt_id}</if>
+		<if test='regst_date != null and regst_date != ""'>AND a.regst_date = #{regst_date}</if>
+		<if test='regst_id != null and regst_id != ""'>AND a.regst_id = #{regst_id}</if>
+		<if test='update_date != null and update_date != ""'>AND a.update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND a.update_id = #{update_id}</if>
+		
+		<if test='facty_id != null and facty_id != ""'>AND c.facty_id = #{facty_id}</if>
+		<if test='procs_id != null and procs_id != ""'>AND c.procs_id = #{procs_id}</if>
+		<if test='strt_props_ymd != null and strt_props_ymd != ""'>AND substr(a.props_ymdhis,1,8) between #{strt_props_ymd} and #{end_props_ymd} </if>
+		
+	</select>
+
+	<select id="pageGasRiskPrps" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						a.props_sid
+						,a.props_ymdhis
+						,a.anys_ymdhi
+						,a.anys_sys_cd
+						,a.risk_type_id
+						,a.eqmt_id
+						,b.RISK_STEP_CD
+						,b.RISK_NUM
+						,b.RISK_UNIT
+						,c.facty_id
+						,c.facty_nm
+						,c.procs_id
+						,c.procs_nm
+						,c.eqmt_nm
+						,a.regst_date
+						,a.regst_id
+						,a.update_date
+						,a.update_id
+						${causequery}
+						${causeconcatquery}
+					FROM tb_gas_risk_prps a,th_eqmt_risk_anay_rtme_load_min b, vw_equipment c
+					WHERE a.anys_ymdhi = b.anys_ymdhi
+					and a.anys_sys_cd = b.anys_sys_cd
+					and a.risk_type_id = b.risk_type_id
+					and a.eqmt_id = b.eqmt_id
+					AND b.eqmt_id = c.eqmt_id
+		]]>
+					<if test='props_sid != null and props_sid != ""'> AND a.props_sid = #{props_sid}</if>
+					<if test='props_ymdhis != null and props_ymdhis != ""'> AND a.props_ymdhis = #{props_ymdhis}</if>
+					<if test='anys_ymdhi != null and anys_ymdhi != ""'> AND a.anys_ymdhi = #{anys_ymdhi}</if>
+					<if test='anys_sys_cd != null and anys_sys_cd != ""'> AND a.anys_sys_cd = #{anys_sys_cd}</if>
+					<if test='risk_type_id != null and risk_type_id != ""'> AND a.risk_type_id = #{risk_type_id}</if>
+					<if test='eqmt_id != null and eqmt_id != ""'> AND a.eqmt_id = #{eqmt_id}</if>
+					<if test='regst_date != null and regst_date != ""'> AND a.regst_date = #{regst_date}</if>
+					<if test='regst_id != null and regst_id != ""'> AND a.regst_id = #{regst_id}</if>
+					<if test='update_date != null and update_date != ""'> AND a.update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND a.update_id = #{update_id}</if>
+					
+					<if test='facty_id != null and facty_id != ""'>AND c.facty_id = #{facty_id}</if>
+					<if test='procs_id != null and procs_id != ""'>AND c.procs_id = #{procs_id}</if>
+					<if test='strt_props_ymd != null and strt_props_ymd != ""'>AND substr(a.props_ymdhis,1,8) between #{strt_props_ymd} and #{end_props_ymd} </if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countGasRiskPrps" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tb_gas_risk_prps a,th_eqmt_risk_anay_rtme_load_min b, vw_equipment c
+			WHERE a.anys_ymdhi = b.anys_ymdhi
+			and a.anys_sys_cd = b.anys_sys_cd
+			and a.risk_type_id = b.risk_type_id
+			and a.eqmt_id = b.eqmt_id
+			AND b.eqmt_id = c.eqmt_id
+		]]>
+		<if test='props_sid != null and props_sid != ""'> AND a.props_sid = #{props_sid}</if>
+		<if test='props_ymdhis != null and props_ymdhis != ""'> AND a.props_ymdhis = #{props_ymdhis}</if>
+		<if test='anys_ymdhi != null and anys_ymdhi != ""'> AND a.anys_ymdhi = #{anys_ymdhi}</if>
+		<if test='anys_sys_cd != null and anys_sys_cd != ""'> AND a.anys_sys_cd = #{anys_sys_cd}</if>
+		<if test='risk_type_id != null and risk_type_id != ""'> AND a.risk_type_id = #{risk_type_id}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'> AND a.eqmt_id = #{eqmt_id}</if>
+		<if test='regst_date != null and regst_date != ""'> AND a.regst_date = #{regst_date}</if>
+		<if test='regst_id != null and regst_id != ""'> AND a.regst_id = #{regst_id}</if>
+		<if test='update_date != null and update_date != ""'> AND a.update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'> AND a.update_id = #{update_id}</if>
+		
+		<if test='facty_id != null and facty_id != ""'>AND c.facty_id = #{facty_id}</if>
+		<if test='procs_id != null and procs_id != ""'>AND c.procs_id = #{procs_id}</if>
+		<if test='strt_props_ymd != null and strt_props_ymd != ""'>AND substr(a.props_ymdhis,1,8) between #{strt_props_ymd} and #{end_props_ymd} </if>
+	</select>
+</mapper>

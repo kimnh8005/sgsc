@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.MenuDAO">
+
+	<insert id="insertMenu">
+		<![CDATA[
+			INSERT INTO tb_menu (
+				menu_sid
+				,auth_sid
+				,parns_menu_sid
+				,scrn_id
+				,menu_nm
+				,menu_lvl
+				,menu_prn_odr
+				,use_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,prt_tgt_cd
+			) VALUES (
+				#{menu_sid}
+				,#{auth_sid}
+				,#{parns_menu_sid}
+				,#{scrn_id}
+				,#{menu_nm}
+				,#{menu_lvl}
+				,#{menu_prn_odr}
+				,#{use_yn}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regist_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+				,#{prt_tgt_cd}
+			)
+		]]>
+	</insert> 
+
+	<select id="getMenuKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(menu_sid,2)),0) +1  ,9,'0'))
+			FROM tb_menu
+		]]>
+	</select>
+
+	<delete id="deleteMenu">
+		<![CDATA[
+			DELETE FROM tb_menu
+			WHERE menu_sid = #{menu_sid}
+		]]>
+	</delete>
+
+	<update id="updateMenu">
+		<![CDATA[
+			UPDATE tb_menu
+			SET
+		]]>
+			<if test='menu_sid != null and menu_sid != ""'>menu_sid = #{menu_sid}</if>
+			<if test='auth_sid != null and auth_sid != ""'>,auth_sid = #{auth_sid}</if>
+			<if test='parns_menu_sid != null and parns_menu_sid != ""'>,parns_menu_sid = #{parns_menu_sid}</if>
+			<if test='scrn_id != null and scrn_id != ""'>,scrn_id = #{scrn_id}</if>
+			<if test='menu_nm != null and menu_nm != ""'>,menu_nm = #{menu_nm}</if>
+			<if test='menu_lvl != null and menu_lvl != ""'>,menu_lvl = #{menu_lvl}</if>
+			<if test='menu_prn_odr != null and menu_prn_odr != ""'>,menu_prn_odr = #{menu_prn_odr}</if>
+			<if test='use_yn != null and use_yn != ""'>,use_yn = #{use_yn}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+			<if test='prt_tgt_cd != null and prt_tgt_cd != ""'>,prt_tgt_cd = #{prt_tgt_cd}</if>
+		<![CDATA[
+			WHERE menu_sid = #{menu_sid}
+		]]>
+	</update>
+
+	<select id="getMenu_menu_sid" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				menu_sid
+				,auth_sid
+				,parns_menu_sid
+				,scrn_id
+				,menu_nm
+				,menu_lvl
+				,menu_prn_odr
+				,use_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,prt_tgt_cd
+			FROM tb_menu
+			WHERE menu_sid = #{menu_sid}
+		]]>
+	</select>
+
+	<select id="listMenu" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				a.menu_sid
+				,a.auth_sid
+				,a.parns_menu_sid
+				,a.scrn_id
+				,b.scrn_nm
+				,b.scrn_path
+				,b.read_auth_sid
+				,b.modify_auth_sid
+				,b.create_auth_sid
+				,b.del_auth_sid
+				,a.menu_nm
+				,a.menu_lvl
+				,a.menu_prn_odr
+				,case when IFNULL(a.scrn_id,'')!='' then 'Y'
+				 else 'N' END scrn_yn
+				,a.use_yn
+				,a.regist_date
+				,a.regist_id
+				,a.update_date
+				,a.update_id
+				,a.prt_tgt_cd
+			FROM tb_menu a left outer join tb_scrn_auth b
+			ON a.scrn_id = b.scrn_id
+			WHERE 1=1
+		]]>
+		<if test='menu_sid != null and menu_sid != ""'>AND a.menu_sid = #{menu_sid}</if>
+		<if test='auth_sid != null and auth_sid != ""'>AND a.auth_sid = #{auth_sid}</if>
+		<if test='parns_menu_sid != null and parns_menu_sid != ""'>AND a.parns_menu_sid = #{parns_menu_sid}</if>
+		<if test='scrn_id != null and scrn_id != ""'>AND a.scrn_id = #{scrn_id}</if>
+		<if test='menu_nm != null and menu_nm != ""'>AND a.menu_nm = #{menu_nm}</if>
+		<if test='menu_lvl != null and menu_lvl != ""'>AND a.menu_lvl = #{menu_lvl}</if>
+		<if test='menu_prn_odr != null and menu_prn_odr != ""'>AND a.menu_prn_odr = #{menu_prn_odr}</if>
+		<if test='use_yn != null and use_yn != ""'>AND a.use_yn = #{use_yn}</if>
+		<if test='regist_date != null and regist_date != ""'>AND a.regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND a.regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND a.update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND a.update_id = #{update_id}</if>
+		<if test='prt_tgt_cd != null and prt_tgt_cd != ""'>AND a.prt_tgt_cd = #{prt_tgt_cd}</if>
+		ORDER BY a.menu_prn_odr
+	</select>
+
+	<select id="pageMenu" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						menu_sid
+						,auth_sid
+						,parns_menu_sid
+						,scrn_id
+						,menu_nm
+						,menu_lvl
+						,menu_prn_odr
+						,use_yn
+						,regist_date
+						,regist_id
+						,update_date
+						,update_id
+						,prt_tgt_cd
+					FROM tb_menu
+					WHERE 1 = 1 
+		]]>
+					<if test='menu_sid != null and menu_sid != ""'> AND menu_sid = #{menu_sid}</if>
+					<if test='auth_sid != null and auth_sid != ""'> AND auth_sid = #{auth_sid}</if>
+					<if test='parns_menu_sid != null and parns_menu_sid != ""'> AND parns_menu_sid = #{parns_menu_sid}</if>
+					<if test='scrn_id != null and scrn_id != ""'> AND scrn_id = #{scrn_id}</if>
+					<if test='menu_nm != null and menu_nm != ""'> AND menu_nm = #{menu_nm}</if>
+					<if test='menu_lvl != null and menu_lvl != ""'> AND menu_lvl = #{menu_lvl}</if>
+					<if test='menu_prn_odr != null and menu_prn_odr != ""'> AND menu_prn_odr = #{menu_prn_odr}</if>
+					<if test='use_yn != null and use_yn != ""'> AND use_yn = #{use_yn}</if>
+					<if test='regist_date != null and regist_date != ""'> AND regist_date = #{regist_date}</if>
+					<if test='regist_id != null and regist_id != ""'> AND regist_id = #{regist_id}</if>
+					<if test='update_date != null and update_date != ""'> AND update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND update_id = #{update_id}</if>
+					<if test='prt_tgt_cd != null and prt_tgt_cd != ""'> AND prt_tgt_cd = #{prt_tgt_cd}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countMenu" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tb_menu
+			WHERE 1 = 1 
+		]]>
+		<if test='menu_sid != null and menu_sid != ""'>AND menu_sid = #{menu_sid}</if>
+		<if test='auth_sid != null and auth_sid != ""'>AND auth_sid = #{auth_sid}</if>
+		<if test='parns_menu_sid != null and parns_menu_sid != ""'>AND parns_menu_sid = #{parns_menu_sid}</if>
+		<if test='scrn_id != null and scrn_id != ""'>AND scrn_id = #{scrn_id}</if>
+		<if test='menu_nm != null and menu_nm != ""'>AND menu_nm = #{menu_nm}</if>
+		<if test='menu_lvl != null and menu_lvl != ""'>AND menu_lvl = #{menu_lvl}</if>
+		<if test='menu_prn_odr != null and menu_prn_odr != ""'>AND menu_prn_odr = #{menu_prn_odr}</if>
+		<if test='use_yn != null and use_yn != ""'>AND use_yn = #{use_yn}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+		<if test='prt_tgt_cd != null and prt_tgt_cd != ""'>AND prt_tgt_cd = #{prt_tgt_cd}</if>
+	</select>
+</mapper>

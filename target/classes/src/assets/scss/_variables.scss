@@ -1,0 +1,48 @@
+
+$default-width: 1560px;
+
+$gray-line-color: #d4d4d4;
+
+//colors
+$default-background-color: #f9f9f9 !default;
+$default-hover-background-color: #e2f3f5 !default;
+
+//size
+$layout-header-height: 100px;
+
+//font-color
+$default-font-color: #454545;
+$light-font-color: #888888;
+$lighter-font-color: #aaaaaa;
+$a-color: #454545;
+
+// border-radius
+$border-radius: 10px;
+$half-border-radius: 5px;
+
+//button color
+$default-button-background-color: #009dac;
+$default-button-text-color: #ffffff;
+$turquoise-color: #2d969b;
+$turquoise-text-color: #3da0a9;
+$dark-button-background-color: #454545;
+
+//risk level colors
+$normal-level-color: #2d969b;//정상
+$caution-level-color: #f06c00;//주의
+$warning-level-color: #ff0000;//경고
+$danger-level-color: #a40000;//위험
+
+$warning-level-font-color: #f94a4a;
+
+//table style
+$table-font-size: 15px;
+$thead-background-color: #3a3e43;
+$thead-text-color: #fff;
+$thead-border-color: #4b4e51;
+
+$tr-border-bottom-color: #d2d2d2;
+
+$td-font-color: #3c3f43;//3b3f43
+$td-button-background-color: #fff;
+$td-button-border-color: #8a8a8a;

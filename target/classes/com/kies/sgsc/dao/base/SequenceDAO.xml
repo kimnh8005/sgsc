@@ -1,0 +1,109 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.SequenceDAO">
+
+	<insert id="insertSequence">
+		<![CDATA[
+			INSERT INTO tc_sequence (
+				seq_id
+				,seq_num
+				,regist_date
+			) VALUES (
+				#{seq_id}
+				,#{seq_num}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			)
+		]]>
+	</insert> 
+
+	<select id="getSequenceKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(seq_id,2)),0) +1  ,9,'0'))
+			FROM tc_sequence
+		]]>
+	</select>
+
+	<delete id="deleteSequence">
+		<![CDATA[
+			DELETE FROM tc_sequence
+			WHERE seq_id = #{seq_id}
+		]]>
+	</delete>
+
+	<update id="updateSequence">
+		<![CDATA[
+			UPDATE tc_sequence
+			SET
+		]]>
+			<if test='seq_id != null and seq_id != ""'>seq_id = #{seq_id}</if>
+			<if test='seq_num != null and seq_num != ""'>,seq_num = #{seq_num}</if>
+			 ,regist_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+		<![CDATA[
+			WHERE seq_id = #{seq_id}
+		]]>
+	</update>
+
+	<select id="getSequence_seq_id" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				seq_id
+				,seq_num
+				,regist_date
+			FROM tc_sequence
+			WHERE seq_id = #{seq_id}
+		]]>
+	</select>
+
+	<select id="listSequence" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				seq_id
+				,seq_num
+				,regist_date
+			FROM tc_sequence
+			WHERE 1=1
+		]]>
+		<if test='seq_id != null and seq_id != ""'>AND seq_id = #{seq_id}</if>
+		<if test='seq_num != null and seq_num != ""'>AND seq_num = #{seq_num}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+	</select>
+
+	<select id="pageSequence" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						seq_id
+						,seq_num
+						,regist_date
+					FROM tc_sequence
+					WHERE 1 = 1 
+		]]>
+					<if test='seq_id != null and seq_id != ""'> AND seq_id = #{seq_id}</if>
+					<if test='seq_num != null and seq_num != ""'> AND seq_num = #{seq_num}</if>
+					<if test='regist_date != null and regist_date != ""'> AND regist_date = #{regist_date}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countSequence" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tc_sequence
+			WHERE 1 = 1 
+		]]>
+		<if test='seq_id != null and seq_id != ""'>AND seq_id = #{seq_id}</if>
+		<if test='seq_num != null and seq_num != ""'>AND seq_num = #{seq_num}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+	</select>
+</mapper>

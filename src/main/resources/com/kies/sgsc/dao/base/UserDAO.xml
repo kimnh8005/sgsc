@@ -1,0 +1,264 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.UserDAO">
+
+	<insert id="insertUser">
+		<![CDATA[
+			INSERT INTO tb_user (
+				user_id
+				,user_nm
+				,auth_sid
+				,password
+				,dept_cd
+				,contact				
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			) VALUES (
+				#{user_id}
+				,#{user_nm}
+				,#{auth_sid}
+				,#{password}
+				,#{dept_cd}
+				,#{contact}				
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regist_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+			)
+		]]>
+	</insert> 
+
+	<select id="getUserKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(user_id,2)),0) +1  ,9,'0'))
+			FROM tb_user
+		]]>
+	</select>
+
+	<delete id="deleteUser">
+		<![CDATA[
+			DELETE FROM tb_user
+			WHERE user_id = #{user_id}
+		]]>
+	</delete>
+
+	<update id="updateUser">
+		<![CDATA[
+			UPDATE tb_user
+			SET
+		]]>
+			<if test='user_id != null and user_id != ""'>user_id = #{user_id}</if>
+			<if test='user_nm != null and user_nm != ""'>,user_nm = #{user_nm}</if>
+			<if test='auth_sid != null and auth_sid != ""'>,auth_sid = #{auth_sid}</if>
+			<if test='dept_cd != null and dept_cd != ""'>,dept_cd = #{dept_cd}</if>
+			<if test='contact != null and contact != ""'>,contact = #{contact}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+		<![CDATA[
+			WHERE user_id = #{user_id}
+		]]>
+	</update>
+	
+	<update id="updateUsertToken">
+		<![CDATA[
+			UPDATE tb_user
+			SET push_token = #{push_token}
+			,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+		]]>
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+		<![CDATA[
+			WHERE user_id = #{user_id}
+		]]>
+	</update>
+	
+	
+	<update id="updateUserPassword">
+		<![CDATA[
+			UPDATE tb_user
+			SET password = #{password}
+			,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+		]]>
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+		<![CDATA[
+			WHERE user_id = #{user_id}
+		]]>
+	</update>
+
+	<select id="getUser_user_id" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				user_id
+				,user_nm
+				,auth_sid
+				,(SELECT
+					auth_nm
+				FROM tb_auth b
+				WHERE b.auth_sid = a.auth_sid) auth_snm
+				,password
+				,dept_cd
+				,(SELECT 
+					c.CD_NM 
+				  FROM tc_common_code c 
+				  WHERE CD_GRP_ID='DEPT_CD' 
+				  AND c.cd_id = a.dept_cd) dept_nm
+				,contact
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			FROM tb_user a
+			WHERE user_id = #{user_id}
+		]]>
+	</select>
+
+	<select id="listUser" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				user_id
+				,user_nm
+				,auth_sid
+				,password
+				,dept_cd
+				,contact
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,(SELECT
+					auth_nm
+				FROM tb_auth b
+				WHERE b.auth_sid = a.auth_sid) auth_snm
+				,(SELECT 
+					c.CD_NM 
+				  FROM tc_common_code c 
+				  WHERE CD_GRP_ID='DEPT_CD' 
+				  AND c.cd_id = a.dept_cd) dept_nm
+			FROM tb_user a
+			WHERE 1=1
+		]]>
+		<if test='user_id != null and user_id != ""'>AND user_id = #{user_id}</if>
+		<if test='user_nm != null and user_nm != ""'>AND user_nm = #{user_nm}</if>
+		<if test='auth_sid != null and auth_sid != ""'>AND auth_sid = #{auth_sid}</if>
+		<if test='password != null and password != ""'>AND password = #{password}</if>
+		<if test='dept_cd != null and dept_cd != ""'>AND dept_cd = #{dept_cd}</if>
+		<if test='contact != null and contact != ""'>AND contact = #{contact}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+	
+	
+	<select id="listUserDevice" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				a.user_id
+				,a.user_nm
+				,a.auth_sid
+				,a.password
+				,a.dept_cd
+				,a.contact
+				,a.regist_date
+				,a.regist_id
+				,a.update_date
+				,a.update_id
+				,b.mobile_token
+				,b.mobile_brand
+				,b.mobile__model
+				,b.mobile_os_type_cd
+				,b.mobile_os_ver
+				,b.mobile_app_ver
+				,b.mobile_push_yn
+				,b.del_yn
+				,(SELECT
+					auth_nm
+				FROM tb_auth b
+				WHERE b.auth_sid = a.auth_sid) auth_snm
+				,(SELECT 
+					c.CD_NM 
+				  FROM tc_common_code c 
+				  WHERE CD_GRP_ID='DEPT_CD' 
+				  AND c.cd_id = a.dept_cd) dept_nm
+			FROM tb_user a left OUTER join tc_user_devices b
+			ON a.USER_ID = b.user_id
+			where 1=1
+		]]>
+		<if test='user_id != null and user_id != ""'>AND user_id = #{user_id}</if>
+		<if test='user_nm != null and user_nm != ""'>AND user_nm = #{user_nm}</if>
+		<if test='auth_sid != null and auth_sid != ""'>AND auth_sid = #{auth_sid}</if>
+		<if test='dept_cd != null and dept_cd != ""'>AND dept_cd = #{dept_cd}</if>
+		<if test='contact != null and contact != ""'>AND contact = #{contact}</if>
+	</select>
+	
+
+	<select id="pageUser" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						user_id
+						,user_nm
+						,auth_sid
+						,password
+						,dept_cd
+						,contact
+						,regist_date
+						,regist_id
+						,update_date
+						,update_id
+						,(SELECT
+							auth_nm
+						FROM tb_auth b
+						WHERE b.auth_sid = a.auth_sid) auth_snm
+						,(SELECT 
+							c.CD_NM 
+						  FROM tc_common_code c 
+						  WHERE CD_GRP_ID='DEPT_CD' 
+						  AND c.cd_id = a.dept_cd) dept_nm
+					FROM tb_user a
+					WHERE 1 = 1 
+		]]>
+					<if test='user_id != null and user_id != ""'> AND user_id = #{user_id}</if>
+					<if test='user_nm != null and user_nm != ""'> AND user_nm = #{user_nm}</if>
+					<if test='auth_sid != null and auth_sid != ""'> AND auth_sid = #{auth_sid}</if>
+					<if test='password != null and password != ""'> AND password = #{password}</if>
+					<if test='dept_cd != null and dept_cd != ""'> AND dept_cd = #{dept_cd}</if>
+					<if test='contact != null and contact != ""'> AND contact = #{contact}</if>
+					<if test='regist_date != null and regist_date != ""'> AND regist_date = #{regist_date}</if>
+					<if test='regist_id != null and regist_id != ""'> AND regist_id = #{regist_id}</if>
+					<if test='update_date != null and update_date != ""'> AND update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND update_id = #{update_id}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countUser" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tb_user
+			WHERE 1 = 1 
+		]]>
+		<if test='user_id != null and user_id != ""'>AND user_id = #{user_id}</if>
+		<if test='user_nm != null and user_nm != ""'>AND user_nm = #{user_nm}</if>
+		<if test='auth_sid != null and auth_sid != ""'>AND auth_sid = #{auth_sid}</if>
+		<if test='password != null and password != ""'>AND password = #{password}</if>
+		<if test='dept_cd != null and dept_cd != ""'>AND dept_cd = #{dept_cd}</if>
+		<if test='contact != null and contact != ""'>AND contact = #{contact}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+</mapper>

@@ -1,0 +1,206 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.ModuleRiskAnlayStoreDAO">
+
+	<insert id="insertModuleRiskAnlayStore">
+		<![CDATA[
+			INSERT INTO tb_module_risk_anlay_store (
+				rise_dt_ymdhmi
+				,anlys_sys_cd
+				,eqmt_id
+				,risk_type_id
+				,anlys_num
+				,anlys_val
+				,field
+				,field2
+			) VALUES (
+				#{rise_dt_ymdhmi}
+				,#{anlys_sys_cd}
+				,#{eqmt_id}
+				,#{risk_type_id}
+				,#{anlys_num}
+				,#{anlys_val}
+				,#{field}
+				,#{field2}
+			)
+		]]>
+	</insert> 
+
+	<delete id="deleteModuleRiskAnlayStore">
+		<![CDATA[
+			DELETE FROM tb_module_risk_anlay_store
+			WHERE rise_dt_ymdhmi = #{rise_dt_ymdhmi}
+			AND anlys_sys_cd = #{anlys_sys_cd}
+			AND eqmt_id = #{eqmt_id}
+			AND risk_type_id = #{risk_type_id}
+		]]>
+	</delete>
+
+	<update id="updateModuleRiskAnlayStore">
+		<![CDATA[
+			UPDATE tb_module_risk_anlay_store
+			SET
+		]]>
+			<if test='rise_dt_ymdhmi != null and rise_dt_ymdhmi != ""'>rise_dt_ymdhmi = #{rise_dt_ymdhmi}</if>
+			<if test='anlys_sys_cd != null and anlys_sys_cd != ""'>,anlys_sys_cd = #{anlys_sys_cd}</if>
+			<if test='eqmt_id != null and eqmt_id != ""'>,eqmt_id = #{eqmt_id}</if>
+			<if test='risk_type_id != null and risk_type_id != ""'>,risk_type_id = #{risk_type_id}</if>
+			<if test='anlys_num != null and anlys_num != ""'>,anlys_num = #{anlys_num}</if>
+			<if test='anlys_val != null and anlys_val != ""'>,anlys_val = #{anlys_val}</if>
+			<if test='field != null and field != ""'>,field = #{field}</if>
+			<if test='field2 != null and field2 != ""'>,field2 = #{field2}</if>
+		<![CDATA[
+			WHERE rise_dt_ymdhmi = #{rise_dt_ymdhmi}
+			AND anlys_sys_cd = #{anlys_sys_cd}
+			AND eqmt_id = #{eqmt_id}
+			AND risk_type_id = #{risk_type_id}
+		]]>
+	</update>
+
+	<select id="listModuleRiskAnlayStore_rise_dt_ymdhmi" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				rise_dt_ymdhmi
+				,anlys_sys_cd
+				,eqmt_id
+				,risk_type_id
+				,anlys_num
+				,anlys_val
+				,field
+				,field2
+			FROM tb_module_risk_anlay_store
+			WHERE rise_dt_ymdhmi = #{rise_dt_ymdhmi}
+		]]>
+	</select>
+
+	<select id="listModuleRiskAnlayStore_anlys_sys_cd" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				rise_dt_ymdhmi
+				,anlys_sys_cd
+				,eqmt_id
+				,risk_type_id
+				,anlys_num
+				,anlys_val
+				,field
+				,field2
+			FROM tb_module_risk_anlay_store
+			WHERE rise_dt_ymdhmi = #{rise_dt_ymdhmi}
+			AND anlys_sys_cd = #{anlys_sys_cd}
+		]]>
+	</select>
+
+	<select id="listModuleRiskAnlayStore_eqmt_id" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				rise_dt_ymdhmi
+				,anlys_sys_cd
+				,eqmt_id
+				,risk_type_id
+				,anlys_num
+				,anlys_val
+				,field
+				,field2
+			FROM tb_module_risk_anlay_store
+			WHERE rise_dt_ymdhmi = #{rise_dt_ymdhmi}
+			AND anlys_sys_cd = #{anlys_sys_cd}
+			AND eqmt_id = #{eqmt_id}
+		]]>
+	</select>
+
+	<select id="getModuleRiskAnlayStore_risk_type_id" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				rise_dt_ymdhmi
+				,anlys_sys_cd
+				,eqmt_id
+				,risk_type_id
+				,anlys_num
+				,anlys_val
+				,field
+				,field2
+			FROM tb_module_risk_anlay_store
+			WHERE rise_dt_ymdhmi = #{rise_dt_ymdhmi}
+			AND anlys_sys_cd = #{anlys_sys_cd}
+			AND eqmt_id = #{eqmt_id}
+			AND risk_type_id = #{risk_type_id}
+		]]>
+	</select>
+
+	<select id="listModuleRiskAnlayStore" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				rise_dt_ymdhmi
+				,anlys_sys_cd
+				,eqmt_id
+				,risk_type_id
+				,anlys_num
+				,anlys_val
+				,field
+				,field2
+			FROM tb_module_risk_anlay_store
+			WHERE 1=1
+		]]>
+		<if test='rise_dt_ymdhmi != null and rise_dt_ymdhmi != ""'>AND rise_dt_ymdhmi = #{rise_dt_ymdhmi}</if>
+		<if test='anlys_sys_cd != null and anlys_sys_cd != ""'>AND anlys_sys_cd = #{anlys_sys_cd}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND eqmt_id = #{eqmt_id}</if>
+		<if test='risk_type_id != null and risk_type_id != ""'>AND risk_type_id = #{risk_type_id}</if>
+		<if test='anlys_num != null and anlys_num != ""'>AND anlys_num = #{anlys_num}</if>
+		<if test='anlys_val != null and anlys_val != ""'>AND anlys_val = #{anlys_val}</if>
+		<if test='field != null and field != ""'>AND field = #{field}</if>
+		<if test='field2 != null and field2 != ""'>AND field2 = #{field2}</if>
+	</select>
+
+	<select id="pageModuleRiskAnlayStore" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						rise_dt_ymdhmi
+						,anlys_sys_cd
+						,eqmt_id
+						,risk_type_id
+						,anlys_num
+						,anlys_val
+						,field
+						,field2
+					FROM tb_module_risk_anlay_store
+					WHERE 1 = 1 
+		]]>
+					<if test='rise_dt_ymdhmi != null and rise_dt_ymdhmi != ""'> AND rise_dt_ymdhmi = #{rise_dt_ymdhmi}</if>
+					<if test='anlys_sys_cd != null and anlys_sys_cd != ""'> AND anlys_sys_cd = #{anlys_sys_cd}</if>
+					<if test='eqmt_id != null and eqmt_id != ""'> AND eqmt_id = #{eqmt_id}</if>
+					<if test='risk_type_id != null and risk_type_id != ""'> AND risk_type_id = #{risk_type_id}</if>
+					<if test='anlys_num != null and anlys_num != ""'> AND anlys_num = #{anlys_num}</if>
+					<if test='anlys_val != null and anlys_val != ""'> AND anlys_val = #{anlys_val}</if>
+					<if test='field != null and field != ""'> AND field = #{field}</if>
+					<if test='field2 != null and field2 != ""'> AND field2 = #{field2}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countModuleRiskAnlayStore" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tb_module_risk_anlay_store
+			WHERE 1 = 1 
+		]]>
+		<if test='rise_dt_ymdhmi != null and rise_dt_ymdhmi != ""'>AND rise_dt_ymdhmi = #{rise_dt_ymdhmi}</if>
+		<if test='anlys_sys_cd != null and anlys_sys_cd != ""'>AND anlys_sys_cd = #{anlys_sys_cd}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND eqmt_id = #{eqmt_id}</if>
+		<if test='risk_type_id != null and risk_type_id != ""'>AND risk_type_id = #{risk_type_id}</if>
+		<if test='anlys_num != null and anlys_num != ""'>AND anlys_num = #{anlys_num}</if>
+		<if test='anlys_val != null and anlys_val != ""'>AND anlys_val = #{anlys_val}</if>
+		<if test='field != null and field != ""'>AND field = #{field}</if>
+		<if test='field2 != null and field2 != ""'>AND field2 = #{field2}</if>
+	</select>
+</mapper>

@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.SendRefugeDAO">
+
+	<insert id="insertSendRefuge">
+		<![CDATA[
+			INSERT INTO tb_send_refuge (
+				user_id
+				,send_rnd
+				,send_sid
+				,user_cfm_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			) VALUES (
+				#{user_id}
+				,#{send_rnd}
+				,#{send_sid}
+				,#{user_cfm_yn}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regist_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+			)
+		]]>
+	</insert> 
+
+	<delete id="deleteSendRefuge">
+		<![CDATA[
+			DELETE FROM tb_send_refuge
+			WHERE user_id = #{user_id}
+			AND send_rnd = #{send_rnd}
+			AND send_sid = #{send_sid}
+		]]>
+	</delete>
+
+	<update id="updateSendRefuge">
+		<![CDATA[
+			UPDATE tb_send_refuge
+			SET
+		]]>
+			<if test='user_id != null and user_id != ""'>user_id = #{user_id}</if>
+			<if test='send_rnd != null and send_rnd != ""'>,send_rnd = #{send_rnd}</if>
+			<if test='send_sid != null and send_sid != ""'>,send_sid = #{send_sid}</if>
+			<if test='user_cfm_yn != null and user_cfm_yn != ""'>,user_cfm_yn = #{user_cfm_yn}</if>
+			 ,regist_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='regist_id != null and regist_id != ""'>,regist_id = #{regist_id}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+		<![CDATA[
+			WHERE user_id = #{user_id}
+			AND send_rnd = #{send_rnd}
+			AND send_sid = #{send_sid}
+		]]>
+	</update>
+
+	<select id="listSendRefuge_user_id" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				user_id
+				,send_rnd
+				,send_sid
+				,user_cfm_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			FROM tb_send_refuge
+			WHERE user_id = #{user_id}
+		]]>
+	</select>
+
+	<select id="listSendRefuge_send_rnd" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				user_id
+				,send_rnd
+				,send_sid
+				,user_cfm_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			FROM tb_send_refuge
+			WHERE user_id = #{user_id}
+			AND send_rnd = #{send_rnd}
+		]]>
+	</select>
+
+	<select id="getSendRefuge_send_sid" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				user_id
+				,send_rnd
+				,send_sid
+				,user_cfm_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			FROM tb_send_refuge
+			WHERE user_id = #{user_id}
+			AND send_rnd = #{send_rnd}
+			AND send_sid = #{send_sid}
+		]]>
+	</select>
+
+	<select id="listSendRefuge" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				user_id
+				,send_rnd
+				,send_sid
+				,user_cfm_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			FROM tb_send_refuge
+			WHERE 1=1
+		]]>
+		<if test='user_id != null and user_id != ""'>AND user_id = #{user_id}</if>
+		<if test='send_rnd != null and send_rnd != ""'>AND send_rnd = #{send_rnd}</if>
+		<if test='send_sid != null and send_sid != ""'>AND send_sid = #{send_sid}</if>
+		<if test='user_cfm_yn != null and user_cfm_yn != ""'>AND user_cfm_yn = #{user_cfm_yn}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+
+	<select id="pageSendRefuge" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						user_id
+						,send_rnd
+						,send_sid
+						,user_cfm_yn
+						,regist_date
+						,regist_id
+						,update_date
+						,update_id
+					FROM tb_send_refuge
+					WHERE 1 = 1 
+		]]>
+					<if test='user_id != null and user_id != ""'> AND user_id = #{user_id}</if>
+					<if test='send_rnd != null and send_rnd != ""'> AND send_rnd = #{send_rnd}</if>
+					<if test='send_sid != null and send_sid != ""'> AND send_sid = #{send_sid}</if>
+					<if test='user_cfm_yn != null and user_cfm_yn != ""'> AND user_cfm_yn = #{user_cfm_yn}</if>
+					<if test='regist_date != null and regist_date != ""'> AND regist_date = #{regist_date}</if>
+					<if test='regist_id != null and regist_id != ""'> AND regist_id = #{regist_id}</if>
+					<if test='update_date != null and update_date != ""'> AND update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND update_id = #{update_id}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countSendRefuge" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tb_send_refuge
+			WHERE 1 = 1 
+		]]>
+		<if test='user_id != null and user_id != ""'>AND user_id = #{user_id}</if>
+		<if test='send_rnd != null and send_rnd != ""'>AND send_rnd = #{send_rnd}</if>
+		<if test='send_sid != null and send_sid != ""'>AND send_sid = #{send_sid}</if>
+		<if test='user_cfm_yn != null and user_cfm_yn != ""'>AND user_cfm_yn = #{user_cfm_yn}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+</mapper>

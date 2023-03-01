@@ -1,0 +1,209 @@
+/********************************************************************
+ SGSC table styles
+ author: Jong-sun Won
+ ********************************************************************/
+@import "variables";
+
+table{
+  border-collapse: collapse;
+  font-size: $table-font-size;
+  line-height: 1em;
+  width: 100%;
+  text-align: center;
+  color: $default-font-color;
+  //table-layout:fixed;
+
+  &.default-table{
+    margin-bottom: 30px;
+
+    &.double-row-header{
+      > thead{
+        tr{
+          > th{
+            padding: 10px 0;
+            &.no-radius{
+              border-radius: 0;
+            }
+          }
+          &:first-child{
+            > th:first-child:not([rowspan]){
+              border-bottom-left-radius: 0;
+            }
+            > th:last-child:not([rowspan]){
+              border-bottom-right-radius: 0;
+            }
+          }
+          &:last-child{
+            > th{
+              border-top: 1px solid $thead-border-color;
+              &.border-right{
+                border-right: 1px solid $thead-border-color;
+              }
+            }
+            > th:first-child:not([rowspan]){
+              border-top-left-radius: 0;
+              border-bottom-left-radius: 0;
+            }
+            > th:last-child:not([rowspan]){
+              border-top-right-radius: 0;
+            }
+          }
+        }
+      }
+    }
+
+    > thead{
+      overflow: hidden;
+      border-radius: 10px;
+      border: 0;
+
+      > tr {
+        /*&:first-child{
+          > th:first-child{
+            border-top-left-radius: $half-border-radius;
+          }
+          > th:last-child{
+            border-top-right-radius: $half-border-radius;
+          }
+        }
+
+        &:last-child{
+          > th:first-child{
+            border-bottom-left-radius: $half-border-radius;
+          }
+        }*/
+
+
+        > th {
+          background-color: $thead-background-color;
+          color: $thead-text-color;
+          padding: 15px 0;
+          outline: none;
+
+          &:not(:last-child){
+            border-right: 1px solid $thead-border-color;
+          }
+          &:first-child{
+            border-radius: $half-border-radius 0 0 $half-border-radius;
+          }
+          &:last-child{
+            border-radius: 0 $half-border-radius $half-border-radius 0;
+          }
+        }
+      }
+    }
+
+    &.no-header > tbody > tr:first-child td{
+      border-top: 1px solid $tr-border-bottom-color;
+    }
+    > tbody{
+      > tr {
+        height: 50px;
+
+        > th, td{
+          padding: 10px ;
+          border-bottom: 1px solid $tr-border-bottom-color;
+          color: $td-font-color;
+
+          &.has-no-item{
+            color: $lighter-font-color;
+          }
+          &.text-left{
+            text-align: left;
+          }
+
+          &.flex-in-td{
+            display: flex;
+            justify-content: center;
+          }
+          button,
+          .btn{
+            border: 1px solid $td-button-border-color;
+            background-color: $td-button-background-color;
+            height: 28px;
+            color: $default-font-color;
+            padding: 0 10px;
+            border-radius: 5px;
+            line-height: 26px;
+
+            &.default-button{
+              border: 0;
+              background-color: $default-button-background-color;
+              color: $default-button-text-color;
+              box-shadow: none;
+              padding: 0 17px 0 20px;
+              margin: 0 10px;
+            }
+
+            > img {
+              margin-left: 10px;
+            }
+          }
+        }
+      }
+    }
+  }
+
+  &.view-table{
+    table-layout: fixed;
+    color: $td-font-color;
+
+    &:not(:last-child){
+      margin-bottom: 30px;
+    }
+
+    tr{
+      height: 50px;
+      &.table-guide{
+        height: 0;
+        > th{
+          padding: 0;
+          border: 0;
+        }
+        > td{
+          border: 0;
+        }
+      }
+
+      &.multi-line{
+        height: 150px;
+      }
+
+      th{
+        background-color: #f7f7f7;
+        width: 150px;
+        box-sizing: border-box;
+
+        &:first-child{
+          border-left: none;
+        }
+      }
+      td{
+        text-align: left;
+        padding: 0 30px;
+
+        &:last-child{
+          border-right: none;
+        }
+      }
+      th, td{
+        border: 1px solid $gray-line-color;
+      }
+    }
+
+    &.wide-th{
+      tr > th{
+        width: 200px;
+      }
+      tr > td{
+        input[type=text],
+        select{
+          width: 300px;
+        }
+      }
+    }
+    &.in-dialog{
+      width: 800px;
+    }
+  }
+}

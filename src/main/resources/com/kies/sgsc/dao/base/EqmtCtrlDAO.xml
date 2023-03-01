@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.EqmtCtrlDAO">
+
+	<insert id="insertEqmtCtrlHistory">
+		<![CDATA[
+			INSERT INTO th_eqmt_tag_ctrl (
+				 tag_ctrl_id,
+				 status,
+				 regist_id,
+				 content,
+				 node_id,
+				 ip
+			) VALUES (
+				 #{tag_ctrl_id},
+				 #{status},
+				 #{regist_id},
+				 #{content},
+				 #{node_id},
+				 #{ip}			
+			)
+		]]>
+	</insert> 
+	
+	<select id="getEqmtCtrlStatusHistory" resultType="hashmap">
+		<![CDATA[		
+			SELECT * FROM sgscdb.th_eqmt_tag_ctrl;
+		]]>
+	</select>
+</mapper>
+

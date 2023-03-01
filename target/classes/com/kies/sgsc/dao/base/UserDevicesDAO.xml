@@ -1,0 +1,207 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.UserDevicesDAO">
+
+	<insert id="insertUserDevices">
+		<![CDATA[
+			INSERT INTO tc_user_devices (
+				user_id
+				,mobile_token
+				,mobile_brand
+				,mobile__model
+				,mobile_os_type_cd
+				,mobile_os_ver
+				,mobile_app_ver
+				,regist_date
+				,update_date
+			]]>
+				<if test='mobile_push_yn != null and mobile_push_yn != ""'>,mobile_push_yn</if>
+			<![CDATA[
+				,del_yn
+			) VALUES (
+				#{user_id}
+				,#{mobile_token}
+				,#{mobile_brand}
+				,#{mobile__model}
+				,#{mobile_os_type_cd}
+				,#{mobile_os_ver}
+				,#{mobile_app_ver}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			]]>
+				<if test='mobile_push_yn != null and mobile_push_yn != ""'>,#{mobile_push_yn}</if>
+			<![CDATA[
+				,#{del_yn}
+			)
+		]]>
+	</insert> 
+
+	<select id="getUserDevicesKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(user_id,2)),0) +1  ,9,'0'))
+			FROM tc_user_devices
+		]]>
+	</select>
+
+	<delete id="deleteUserDevices">
+		<![CDATA[
+			DELETE FROM tc_user_devices
+			WHERE user_id = #{user_id}
+		]]>
+	</delete>
+
+	<update id="updateUserDevices">
+		<![CDATA[
+			UPDATE tc_user_devices
+			SET
+		]]>
+			<if test='user_id != null and user_id != ""'>user_id = #{user_id}</if>
+			<if test='mobile_token != null and mobile_token != ""'>,mobile_token = #{mobile_token}</if>
+			<if test='mobile_brand != null and mobile_brand != ""'>,mobile_brand = #{mobile_brand}</if>
+			<if test='mobile__model != null and mobile__model != ""'>,mobile__model = #{mobile__model}</if>
+			<if test='mobile_os_type_cd != null and mobile_os_type_cd != ""'>,mobile_os_type_cd = #{mobile_os_type_cd}</if>
+			<if test='mobile_os_ver != null and mobile_os_ver != ""'>,mobile_os_ver = #{mobile_os_ver}</if>
+			<if test='mobile_app_ver != null and mobile_app_ver != ""'>,mobile_app_ver = #{mobile_app_ver}</if>
+			 ,regist_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='del_yn != null and del_yn != ""'>,del_yn = #{del_yn}</if>
+			<if test='mobile_push_yn != null and mobile_push_yn != ""'>,mobile_push_yn = #{mobile_push_yn}</if>
+		<![CDATA[
+			WHERE user_id = #{user_id}
+		]]>
+	</update>
+
+	<select id="getUserDevices_user_id" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				a.user_id
+				,a.mobile_token
+				,a.mobile_brand
+				,a.mobile__model
+				,a.mobile_os_type_cd
+				,a.mobile_os_ver
+				,a.mobile_app_ver
+				,a.regist_date
+				,a.update_date
+				,a.del_yn
+				,a.mobile_push_yn
+				,b.user_nm
+				,b.auth_sid
+				,b.dept_cd
+				,b.contact
+			FROM tc_user_devices a,tb_user b
+			WHERE a.user_id = b.user_id
+			and a.user_id = #{user_id}
+		]]>
+	</select>
+
+	<select id="listUserDevices" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				a.user_id
+				,a.mobile_token
+				,a.mobile_brand
+				,a.mobile__model
+				,a.mobile_os_type_cd
+				,a.mobile_os_ver
+				,a.mobile_app_ver
+				,a.regist_date
+				,a.update_date
+				,a.del_yn
+				,a.mobile_push_yn
+				,b.user_nm
+				,b.auth_sid
+				,b.dept_cd
+				,b.contact
+			FROM tc_user_devices a,tb_user b
+			WHERE a.user_id = b.user_id
+		]]>
+		<if test='user_id != null and user_id != ""'>AND a.user_id = #{user_id}</if>
+		<if test='mobile_token != null and mobile_token != ""'>AND a.mobile_token = #{mobile_token}</if>
+		<if test='mobile_brand != null and mobile_brand != ""'>AND a.mobile_brand = #{mobile_brand}</if>
+		<if test='mobile__model != null and mobile__model != ""'>AND a.mobile__model = #{mobile__model}</if>
+		<if test='mobile_os_type_cd != null and mobile_os_type_cd != ""'>AND a.mobile_os_type_cd = #{mobile_os_type_cd}</if>
+		<if test='mobile_os_ver != null and mobile_os_ver != ""'>AND a.mobile_os_ver = #{mobile_os_ver}</if>
+		<if test='mobile_app_ver != null and mobile_app_ver != ""'>AND a.mobile_app_ver = #{mobile_app_ver}</if>
+		<if test='regist_date != null and regist_date != ""'>AND a.regist_date = #{regist_date}</if>
+		<if test='update_date != null and update_date != ""'>AND a.update_date = #{update_date}</if>
+		<if test='del_yn != null and del_yn != ""'>AND a.del_yn = #{del_yn}</if>
+		<if test='mobile_push_yn != null and mobile_push_yn != ""'>AND a.mobile_push_yn = #{mobile_push_yn}</if>
+		
+		<if test='auth_sid != null and auth_sid != ""'>AND b.auth_sid = #{auth_sid}</if>
+		<if test='dept_cd != null and dept_cd != ""'>AND b.dept_cd = #{dept_cd}</if>
+	</select>
+
+	<select id="pageUserDevices" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						a.user_id
+						,a.mobile_token
+						,a.mobile_brand
+						,a.mobile__model
+						,a.mobile_os_type_cd
+						,a.mobile_os_ver
+						,a.mobile_app_ver
+						,a.regist_date
+						,a.update_date
+						,a.del_yn
+						,a.mobile_push_yn
+						,b.user_nm
+						,b.auth_sid
+						,b.dept_cd
+						,b.contact
+					FROM tc_user_devices a,tb_user b
+					WHERE a.user_id = b.user_id
+				]]>
+				<if test='user_id != null and user_id != ""'>AND a.user_id = #{user_id}</if>
+				<if test='mobile_token != null and mobile_token != ""'>AND a.mobile_token = #{mobile_token}</if>
+				<if test='mobile_brand != null and mobile_brand != ""'>AND a.mobile_brand = #{mobile_brand}</if>
+				<if test='mobile__model != null and mobile__model != ""'>AND a.mobile__model = #{mobile__model}</if>
+				<if test='mobile_os_type_cd != null and mobile_os_type_cd != ""'>AND a.mobile_os_type_cd = #{mobile_os_type_cd}</if>
+				<if test='mobile_os_ver != null and mobile_os_ver != ""'>AND a.mobile_os_ver = #{mobile_os_ver}</if>
+				<if test='mobile_app_ver != null and mobile_app_ver != ""'>AND a.mobile_app_ver = #{mobile_app_ver}</if>
+				<if test='regist_date != null and regist_date != ""'>AND a.regist_date = #{regist_date}</if>
+				<if test='update_date != null and update_date != ""'>AND a.update_date = #{update_date}</if>
+				<if test='del_yn != null and del_yn != ""'>AND a.del_yn = #{del_yn}</if>
+				<if test='mobile_push_yn != null and mobile_push_yn != ""'>AND a.mobile_push_yn = #{mobile_push_yn}</if>
+				
+				<if test='auth_sid != null and auth_sid != ""'>AND b.auth_sid = #{auth_sid}</if>
+				<if test='dept_cd != null and dept_cd != ""'>AND b.dept_cd = #{dept_cd}</if>
+		<![CDATA[
+					ORDER BY a.update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countUserDevices" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tc_user_devices a,tb_user b
+			WHERE a.user_id = b.user_id
+		]]>
+		<if test='user_id != null and user_id != ""'>AND a.user_id = #{user_id}</if>
+		<if test='mobile_token != null and mobile_token != ""'>AND a.mobile_token = #{mobile_token}</if>
+		<if test='mobile_brand != null and mobile_brand != ""'>AND a.mobile_brand = #{mobile_brand}</if>
+		<if test='mobile__model != null and mobile__model != ""'>AND a.mobile__model = #{mobile__model}</if>
+		<if test='mobile_os_type_cd != null and mobile_os_type_cd != ""'>AND a.mobile_os_type_cd = #{mobile_os_type_cd}</if>
+		<if test='mobile_os_ver != null and mobile_os_ver != ""'>AND a.mobile_os_ver = #{mobile_os_ver}</if>
+		<if test='mobile_app_ver != null and mobile_app_ver != ""'>AND a.mobile_app_ver = #{mobile_app_ver}</if>
+		<if test='regist_date != null and regist_date != ""'>AND a.regist_date = #{regist_date}</if>
+		<if test='update_date != null and update_date != ""'>AND a.update_date = #{update_date}</if>
+		<if test='del_yn != null and del_yn != ""'>AND a.del_yn = #{del_yn}</if>
+		<if test='mobile_push_yn != null and mobile_push_yn != ""'>AND a.mobile_push_yn = #{mobile_push_yn}</if>
+		
+		<if test='auth_sid != null and auth_sid != ""'>AND b.auth_sid = #{auth_sid}</if>
+		<if test='dept_cd != null and dept_cd != ""'>AND b.dept_cd = #{dept_cd}</if>
+	</select>
+</mapper>

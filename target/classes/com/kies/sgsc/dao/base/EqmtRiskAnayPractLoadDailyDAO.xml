@@ -1,0 +1,196 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.EqmtRiskAnayPractLoadDailyDAO">
+
+	<insert id="insertEqmtRiskAnayPractLoadDaily">
+		<![CDATA[
+			INSERT INTO th_eqmt_risk_anay_pract_load_daily (
+				anys_ymd
+				,anys_sys_cd
+				,risk_type_id
+				,eqmt_id
+				,risk_step_cd
+				,risk_step_lvl
+				,risk_num
+				,risk_unit
+				,risk_val
+			) VALUES (
+				#{anys_ymd}
+				,#{anys_sys_cd}
+				,#{risk_type_id}
+				,#{eqmt_id}
+				,#{risk_step_cd}
+				,#{risk_step_lvl}
+				,#{risk_num}
+				,#{risk_unit}
+				,#{risk_val}
+			)
+		]]>
+	</insert> 
+
+	<delete id="deleteEqmtRiskAnayPractLoadDaily">
+		<![CDATA[
+			DELETE FROM th_eqmt_risk_anay_pract_load_daily
+			WHERE anys_ymd = #{anys_ymd}
+			AND anys_sys_cd = #{anys_sys_cd}
+			AND risk_type_id = #{risk_type_id}
+			AND eqmt_id = #{eqmt_id}
+		]]>
+	</delete>
+
+	<update id="updateEqmtRiskAnayPractLoadDaily">
+		<![CDATA[
+			UPDATE th_eqmt_risk_anay_pract_load_daily
+			SET
+			anys_ymd = #{anys_ymd}
+		]]>
+			<if test='risk_step_cd != null and risk_step_cd != ""'>,risk_step_cd = #{risk_step_cd}</if>
+			<if test='risk_step_lvl != null and risk_step_lvl != ""'>,risk_step_lvl = #{risk_step_lvl}</if>
+			<if test='risk_num != null and risk_num != ""'>,risk_num = #{risk_num}</if>
+			<if test='risk_unit != null and risk_unit != ""'>,risk_unit = #{risk_unit}</if>
+			<if test='risk_val != null and risk_val != ""'>,risk_val = #{risk_val}</if>
+		<![CDATA[
+			WHERE anys_ymd = #{anys_ymd}
+			AND anys_sys_cd = #{anys_sys_cd}
+			AND risk_type_id = #{risk_type_id}
+			AND eqmt_id = #{eqmt_id}
+		]]>
+	</update>
+
+	<select id="listEqmtRiskAnayPractLoadDaily_anys_ymd" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				anys_ymd
+				,anys_sys_cd
+				,risk_type_id
+				,eqmt_id
+				,risk_step_cd
+				,risk_step_lvl
+				,risk_num
+				,risk_unit
+				,risk_val
+			FROM th_eqmt_risk_anay_pract_load_daily
+			WHERE anys_ymd = #{anys_ymd}
+		]]>
+	</select>
+
+	<select id="listEqmtRiskAnayPractLoadDaily_anys_sys_cd" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				anys_ymd
+				,anys_sys_cd
+				,risk_type_id
+				,eqmt_id
+				,risk_step_cd
+				,risk_step_lvl
+				,risk_num
+				,risk_unit
+				,risk_val
+			FROM th_eqmt_risk_anay_pract_load_daily
+			WHERE anys_ymd = #{anys_ymd}
+			AND anys_sys_cd = #{anys_sys_cd}
+		]]>
+	</select>
+
+	<select id="getEqmtRiskAnayPractLoadDaily_risk_type_id" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				anys_ymd
+				,anys_sys_cd
+				,risk_type_id
+				,eqmt_id
+				,risk_step_cd
+				,risk_step_lvl
+				,risk_num
+				,risk_unit
+				,risk_val
+			FROM th_eqmt_risk_anay_pract_load_daily
+			WHERE anys_ymd = #{anys_ymd}
+			AND anys_sys_cd = #{anys_sys_cd}
+			AND risk_type_id = #{risk_type_id}
+			AND eqmt_id = #{eqmt_id}
+		]]>
+	</select>
+
+	<select id="listEqmtRiskAnayPractLoadDaily" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				anys_ymd
+				,anys_sys_cd
+				,risk_type_id
+				,eqmt_id
+				,risk_step_cd
+				,risk_step_lvl
+				,risk_num
+				,risk_unit
+				,risk_val
+			FROM th_eqmt_risk_anay_pract_load_daily
+			WHERE 1=1
+		]]>
+		<if test='anys_ymd != null and anys_ymd != ""'>AND anys_ymd = #{anys_ymd}</if>
+		<if test='anys_sys_cd != null and anys_sys_cd != ""'>AND anys_sys_cd = #{anys_sys_cd}</if>
+		<if test='risk_type_id != null and risk_type_id != ""'>AND risk_type_id = #{risk_type_id}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND eqmt_id = #{eqmt_id}</if>
+		<if test='risk_step_cd != null and risk_step_cd != ""'>AND risk_step_cd = #{risk_step_cd}</if>
+		<if test='risk_step_lvl != null and risk_step_lvl != ""'>AND risk_step_lvl = #{risk_step_lvl}</if>
+		<if test='risk_num != null and risk_num != ""'>AND risk_num = #{risk_num}</if>
+		<if test='risk_unit != null and risk_unit != ""'>AND risk_unit = #{risk_unit}</if>
+		<if test='risk_val != null and risk_val != ""'>AND risk_val = #{risk_val}</if>
+	</select>
+
+	<select id="pageEqmtRiskAnayPractLoadDaily" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						anys_ymd
+						,anys_sys_cd
+						,risk_type_id
+						,eqmt_id
+						,risk_step_cd
+						,risk_step_lvl
+						,risk_num
+						,risk_unit
+						,risk_val
+					FROM th_eqmt_risk_anay_pract_load_daily
+					WHERE 1 = 1 
+		]]>
+					<if test='anys_ymd != null and anys_ymd != ""'> AND anys_ymd = #{anys_ymd}</if>
+					<if test='anys_sys_cd != null and anys_sys_cd != ""'> AND anys_sys_cd = #{anys_sys_cd}</if>
+					<if test='risk_type_id != null and risk_type_id != ""'> AND risk_type_id = #{risk_type_id}</if>
+					<if test='eqmt_id != null and eqmt_id != ""'> AND eqmt_id = #{eqmt_id}</if>
+					<if test='risk_step_cd != null and risk_step_cd != ""'> AND risk_step_cd = #{risk_step_cd}</if>
+					<if test='risk_step_lvl != null and risk_step_lvl != ""'> AND risk_step_lvl = #{risk_step_lvl}</if>
+					<if test='risk_num != null and risk_num != ""'> AND risk_num = #{risk_num}</if>
+					<if test='risk_unit != null and risk_unit != ""'> AND risk_unit = #{risk_unit}</if>
+					<if test='risk_val != null and risk_val != ""'> AND risk_val = #{risk_val}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countEqmtRiskAnayPractLoadDaily" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM th_eqmt_risk_anay_pract_load_daily
+			WHERE 1 = 1 
+		]]>
+		<if test='anys_ymd != null and anys_ymd != ""'>AND anys_ymd = #{anys_ymd}</if>
+		<if test='anys_sys_cd != null and anys_sys_cd != ""'>AND anys_sys_cd = #{anys_sys_cd}</if>
+		<if test='risk_type_id != null and risk_type_id != ""'>AND risk_type_id = #{risk_type_id}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND eqmt_id = #{eqmt_id}</if>
+		<if test='risk_step_cd != null and risk_step_cd != ""'>AND risk_step_cd = #{risk_step_cd}</if>
+		<if test='risk_step_lvl != null and risk_step_lvl != ""'>AND risk_step_lvl = #{risk_step_lvl}</if>
+		<if test='risk_num != null and risk_num != ""'>AND risk_num = #{risk_num}</if>
+		<if test='risk_unit != null and risk_unit != ""'>AND risk_unit = #{risk_unit}</if>
+		<if test='risk_val != null and risk_val != ""'>AND risk_val = #{risk_val}</if>
+	</select>
+</mapper>

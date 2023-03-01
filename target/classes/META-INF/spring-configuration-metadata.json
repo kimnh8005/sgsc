@@ -1,0 +1,44 @@
+{
+  "groups": [
+    {
+      "name": "file",
+      "type": "com.kies.sgsc.comm.config.FileConfig",
+      "sourceType": "com.kies.sgsc.comm.config.FileConfig"
+    },
+    {
+      "name": "session",
+      "type": "com.kies.sgsc.comm.config.SessionConfig",
+      "sourceType": "com.kies.sgsc.comm.config.SessionConfig"
+    },
+    {
+      "name": "spring.datasource.hikari.main",
+      "type": "javax.sql.DataSource",
+      "sourceType": "com.kies.sgsc.comm.datasource.DataAccessConfig",
+      "sourceMethod": "public javax.sql.DataSource masterDataSource() "
+    },
+    {
+      "name": "spring.datasource.hikari.upo",
+      "type": "javax.sql.DataSource",
+      "sourceType": "com.kies.sgsc.comm.datasource.DataAccessUpoConfig",
+      "sourceMethod": "public javax.sql.DataSource dataSource() "
+    }
+  ],
+  "properties": [
+    {
+      "name": "file.upload-dir",
+      "type": "java.lang.String",
+      "sourceType": "com.kies.sgsc.comm.config.FileConfig"
+    },
+    {
+      "name": "session.check",
+      "type": "java.lang.Boolean",
+      "sourceType": "com.kies.sgsc.comm.config.SessionConfig"
+    },
+    {
+      "name": "session.skip-url",
+      "type": "java.util.List<java.lang.String>",
+      "sourceType": "com.kies.sgsc.comm.config.SessionConfig"
+    }
+  ],
+  "hints": []
+}

@@ -1,0 +1,223 @@
+@import "variables";
+
+body, h1, h2, h3, h4, h5, h6, p, ul, ol{
+  margin: 0;
+}
+body{
+  line-height: 1em;
+  background-color: $default-background-color;
+}
+
+ul, ol, dl{
+  list-style-type: none;
+  padding-left: 0;
+}
+.article-body{
+  ol, ul, dl{
+    padding-left: 2em;
+  }
+  ol{
+    list-style-type: decimal;
+  }
+  ul{
+    list-style-type: disc;
+  }
+}
+
+a, a:link{
+  color: $a-color;
+  text-decoration: none;
+}
+
+#app,
+button,
+input,
+select,
+textarea{
+  //font-family: "Malgun Gothic", sans-serif;
+  font-family: 'Noto Sans KR', sans-serif;
+  font-size: 15px;
+  letter-spacing: -0.05em;
+}
+
+button,
+input[type=button],
+input[type=submit],
+.btn{
+  background-color: $default-button-background-color;
+  font-size: 15px;
+  color: $default-button-text-color;
+  border: 0;
+  border-radius: 5px;
+  padding: 0 17px;
+  height: 34px;
+  //box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.2);
+}
+button[disabled],
+input[type=button][disabled],
+input[type=submit][disabled],
+.btn[disabled]{
+  opacity: 0.6;
+}
+.btn-dark{
+  background-color: $dark-button-background-color;
+}
+.btn-white{
+  background-color: #ffffff;
+  border: 2px solid $default-button-background-color;
+  color: $default-button-background-color;
+}
+a.btn-light{
+  border: 1px solid $gray-line-color;
+  background-color: $default-background-color;
+  height: auto;
+  font-size: 14px;
+  color: $default-font-color;
+  padding: 4px 10px;
+  border-radius: 5px;
+}
+a.btn-light:hover{
+  background-color: $default-hover-background-color;
+}
+
+select{
+  border: 1px solid $gray-line-color;
+  padding-left: 10px;
+  padding-right: 10px;
+  height: 35px;
+  box-sizing: border-box;
+}
+input[type=text],
+input[type=password]{
+  border: 1px solid $gray-line-color;
+  padding: 0 10px;
+  height: 35px;
+  box-sizing: border-box;
+}
+textarea{
+  border: 1px solid $gray-line-color;
+  box-sizing: border-box;
+  padding: 10px;
+  width: 100%;
+}
+
+
+#app {
+  display: flex;
+  flex-direction: column;
+}
+
+header {
+  height: $layout-header-height;
+  background-color: $default-background-color;
+  flex-shrink: 0;
+  min-width: $default-width;
+}
+
+.wrapper{
+  display: flex;
+  min-height: calc(100vh - #{$layout-header-height});
+  min-width: $default-width;
+
+  &.login-wrapper{
+    height: 100vh;
+    min-height: auto;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+    min-width: auto;
+    //background-color: $default-background-color;
+    .contents-body{
+      //width: 300px;
+      padding: 0;
+      height: 100vh;
+    }
+  }
+}
+
+
+aside{
+  flex-shrink: 0;
+  width: 270px;
+  background-color: #3a3e43;
+}
+
+.contents-body{
+  width: 100%;
+  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  box-sizing: border-box;
+
+  > footer{
+    height: 60px;
+    flex-shrink: 0;
+    margin-top: auto;
+  }
+
+  .page-box{
+    background-color: #fff;
+    border: 1px solid #d1d1d1;
+    padding: 30px;
+    border-radius: 10px;
+    box-sizing: border-box;
+    margin-bottom: 30px;
+
+    &.filtering{
+      padding: 20px 30px;
+    }
+  }
+}
+
+.button-group, .filter-box{
+  display: flex;
+
+  &.center-type{
+    justify-content: center;
+    button{
+      margin: 0 7px;
+    }
+  }
+  button{
+    margin-left: auto;
+    height: 50px;
+    width: 120px;
+  }
+}
+
+.error-msg{
+  color: $warning-level-color;
+  padding-left: 20px;
+}
+
+//공통 조합 스타일
+.full-size{
+  width: 100%;
+}
+.w300{
+  width: 300px;
+}
+.w200{
+  width: 200px;
+}
+.w150{
+  width: 150px;
+}
+.w100{
+  width: 100px;
+}
+.w90{
+  width: 90px;
+}
+.w80{
+  width: 80px;
+}
+.w70{
+  width: 70px;
+}
+.w60{
+  width: 60px;
+}
+.w50{
+  width: 50px;
+}

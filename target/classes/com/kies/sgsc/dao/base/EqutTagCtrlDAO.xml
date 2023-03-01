@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.upo.UpoDAO">
+
+
+	<select id="get_transmitter_info" resultType="hashmap">
+		<![CDATA[		
+			SELECT
+				(SELECT NAME FROM TB_TRANSMITTER_INFO WHERE b.TRANSMITTER_ID = TRANSMITTER_ID) ,b.TRANSMITTER_ID, b.STATUS, b.DATE
+			FROM 
+			(SELECT TRANSMITTER_ID, MAX(DATE) DATE , MAX(STATUS) STATUS
+			FROM TB_CONTROL_INFO a 
+			GROUP BY TRANSMITTER_ID) b 
+		]]>
+	</select>
+	
+	<insert id="insertControlInfoStatus">
+		<![CDATA[
+			INSERT INTO TB_CONTROL_INFO (
+				NODE_ID,
+				TRANSMITTER_ID,
+				DATE,
+				CMD_ID,
+				CONTENT,
+				FULL_PACKET,
+				STATUS)	 
+			VALUES(
+			#{NODE_ID},
+			#{TRANSMITTER_ID},
+			#{DATE},
+			#{CMD_ID},
+			#{CONTENT},
+			#{FULL_PACKET},
+			#{STATUS}
+			)
+		]]>
+	</insert> 	
+	
+	
+	
+</mapper>

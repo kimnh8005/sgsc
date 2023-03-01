@@ -1,0 +1,245 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.EqEqmtTagDataStoreDAO">
+
+	<insert id="insertEqEqmtTagDataStore">
+		<![CDATA[
+			INSERT INTO tb_eq_eqmt_tag_data_store (
+				rise_time
+				,meeq_id
+				,regist_dt
+				,rw_type
+				,wifi_yn
+				,data_output
+				,data_row
+				,data_range
+				,field6
+				,field7
+				,field8
+				,field9
+				,field10
+				,field11
+				,field14
+				,field15
+			) VALUES (
+				#{rise_time}
+				,#{meeq_id}
+				,#{regist_dt}
+				,#{rw_type}
+				,#{wifi_yn}
+				,#{data_output}
+				,#{data_row}
+				,#{data_range}
+				,#{field6}
+				,#{field7}
+				,#{field8}
+				,#{field9}
+				,#{field10}
+				,#{field11}
+				,#{field14}
+				,#{field15}
+			)
+		]]>
+	</insert> 
+
+	<delete id="deleteEqEqmtTagDataStore">
+		<![CDATA[
+			DELETE FROM tb_eq_eqmt_tag_data_store
+			WHERE rise_time = #{rise_time}
+			AND meeq_id = #{meeq_id}
+		]]>
+	</delete>
+
+	<update id="updateEqEqmtTagDataStore">
+		<![CDATA[
+			UPDATE tb_eq_eqmt_tag_data_store
+			SET
+		]]>
+			<if test='rise_time != null and rise_time != ""'>rise_time = #{rise_time}</if>
+			<if test='meeq_id != null and meeq_id != ""'>,meeq_id = #{meeq_id}</if>
+			<if test='regist_dt != null and regist_dt != ""'>,regist_dt = #{regist_dt}</if>
+			<if test='rw_type != null and rw_type != ""'>,rw_type = #{rw_type}</if>
+			<if test='wifi_yn != null and wifi_yn != ""'>,wifi_yn = #{wifi_yn}</if>
+			<if test='data_output != null and data_output != ""'>,data_output = #{data_output}</if>
+			<if test='data_row != null and data_row != ""'>,data_row = #{data_row}</if>
+			<if test='data_range != null and data_range != ""'>,data_range = #{data_range}</if>
+			<if test='field6 != null and field6 != ""'>,field6 = #{field6}</if>
+			<if test='field7 != null and field7 != ""'>,field7 = #{field7}</if>
+			<if test='field8 != null and field8 != ""'>,field8 = #{field8}</if>
+			<if test='field9 != null and field9 != ""'>,field9 = #{field9}</if>
+			<if test='field10 != null and field10 != ""'>,field10 = #{field10}</if>
+			<if test='field11 != null and field11 != ""'>,field11 = #{field11}</if>
+			<if test='field14 != null and field14 != ""'>,field14 = #{field14}</if>
+			<if test='field15 != null and field15 != ""'>,field15 = #{field15}</if>
+		<![CDATA[
+			WHERE rise_time = #{rise_time}
+			AND meeq_id = #{meeq_id}
+		]]>
+	</update>
+
+	<select id="listEqEqmtTagDataStore_rise_time" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				rise_time
+				,meeq_id
+				,regist_dt
+				,rw_type
+				,wifi_yn
+				,data_output
+				,data_row
+				,data_range
+				,field6
+				,field7
+				,field8
+				,field9
+				,field10
+				,field11
+				,field14
+				,field15
+			FROM tb_eq_eqmt_tag_data_store
+			WHERE rise_time = #{rise_time}
+		]]>
+	</select>
+
+	<select id="getEqEqmtTagDataStore_meeq_id" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				rise_time
+				,meeq_id
+				,regist_dt
+				,rw_type
+				,wifi_yn
+				,data_output
+				,data_row
+				,data_range
+				,field6
+				,field7
+				,field8
+				,field9
+				,field10
+				,field11
+				,field14
+				,field15
+			FROM tb_eq_eqmt_tag_data_store
+			WHERE rise_time = #{rise_time}
+			AND meeq_id = #{meeq_id}
+		]]>
+	</select>
+
+	<select id="listEqEqmtTagDataStore" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				rise_time
+				,meeq_id
+				,regist_dt
+				,rw_type
+				,wifi_yn
+				,data_output
+				,data_row
+				,data_range
+				,field6
+				,field7
+				,field8
+				,field9
+				,field10
+				,field11
+				,field14
+				,field15
+			FROM tb_eq_eqmt_tag_data_store
+			WHERE 1=1
+		]]>
+		<if test='rise_time != null and rise_time != ""'>AND rise_time = #{rise_time}</if>
+		<if test='meeq_id != null and meeq_id != ""'>AND meeq_id = #{meeq_id}</if>
+		<if test='regist_dt != null and regist_dt != ""'>AND regist_dt = #{regist_dt}</if>
+		<if test='rw_type != null and rw_type != ""'>AND rw_type = #{rw_type}</if>
+		<if test='wifi_yn != null and wifi_yn != ""'>AND wifi_yn = #{wifi_yn}</if>
+		<if test='data_output != null and data_output != ""'>AND data_output = #{data_output}</if>
+		<if test='data_row != null and data_row != ""'>AND data_row = #{data_row}</if>
+		<if test='data_range != null and data_range != ""'>AND data_range = #{data_range}</if>
+		<if test='field6 != null and field6 != ""'>AND field6 = #{field6}</if>
+		<if test='field7 != null and field7 != ""'>AND field7 = #{field7}</if>
+		<if test='field8 != null and field8 != ""'>AND field8 = #{field8}</if>
+		<if test='field9 != null and field9 != ""'>AND field9 = #{field9}</if>
+		<if test='field10 != null and field10 != ""'>AND field10 = #{field10}</if>
+		<if test='field11 != null and field11 != ""'>AND field11 = #{field11}</if>
+		<if test='field14 != null and field14 != ""'>AND field14 = #{field14}</if>
+		<if test='field15 != null and field15 != ""'>AND field15 = #{field15}</if>
+	</select>
+
+	<select id="pageEqEqmtTagDataStore" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						rise_time
+						,meeq_id
+						,regist_dt
+						,rw_type
+						,wifi_yn
+						,data_output
+						,data_row
+						,data_range
+						,field6
+						,field7
+						,field8
+						,field9
+						,field10
+						,field11
+						,field14
+						,field15
+					FROM tb_eq_eqmt_tag_data_store
+					WHERE 1 = 1 
+		]]>
+					<if test='rise_time != null and rise_time != ""'> AND rise_time = #{rise_time}</if>
+					<if test='meeq_id != null and meeq_id != ""'> AND meeq_id = #{meeq_id}</if>
+					<if test='regist_dt != null and regist_dt != ""'> AND regist_dt = #{regist_dt}</if>
+					<if test='rw_type != null and rw_type != ""'> AND rw_type = #{rw_type}</if>
+					<if test='wifi_yn != null and wifi_yn != ""'> AND wifi_yn = #{wifi_yn}</if>
+					<if test='data_output != null and data_output != ""'> AND data_output = #{data_output}</if>
+					<if test='data_row != null and data_row != ""'> AND data_row = #{data_row}</if>
+					<if test='data_range != null and data_range != ""'> AND data_range = #{data_range}</if>
+					<if test='field6 != null and field6 != ""'> AND field6 = #{field6}</if>
+					<if test='field7 != null and field7 != ""'> AND field7 = #{field7}</if>
+					<if test='field8 != null and field8 != ""'> AND field8 = #{field8}</if>
+					<if test='field9 != null and field9 != ""'> AND field9 = #{field9}</if>
+					<if test='field10 != null and field10 != ""'> AND field10 = #{field10}</if>
+					<if test='field11 != null and field11 != ""'> AND field11 = #{field11}</if>
+					<if test='field14 != null and field14 != ""'> AND field14 = #{field14}</if>
+					<if test='field15 != null and field15 != ""'> AND field15 = #{field15}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countEqEqmtTagDataStore" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tb_eq_eqmt_tag_data_store
+			WHERE 1 = 1 
+		]]>
+		<if test='rise_time != null and rise_time != ""'>AND rise_time = #{rise_time}</if>
+		<if test='meeq_id != null and meeq_id != ""'>AND meeq_id = #{meeq_id}</if>
+		<if test='regist_dt != null and regist_dt != ""'>AND regist_dt = #{regist_dt}</if>
+		<if test='rw_type != null and rw_type != ""'>AND rw_type = #{rw_type}</if>
+		<if test='wifi_yn != null and wifi_yn != ""'>AND wifi_yn = #{wifi_yn}</if>
+		<if test='data_output != null and data_output != ""'>AND data_output = #{data_output}</if>
+		<if test='data_row != null and data_row != ""'>AND data_row = #{data_row}</if>
+		<if test='data_range != null and data_range != ""'>AND data_range = #{data_range}</if>
+		<if test='field6 != null and field6 != ""'>AND field6 = #{field6}</if>
+		<if test='field7 != null and field7 != ""'>AND field7 = #{field7}</if>
+		<if test='field8 != null and field8 != ""'>AND field8 = #{field8}</if>
+		<if test='field9 != null and field9 != ""'>AND field9 = #{field9}</if>
+		<if test='field10 != null and field10 != ""'>AND field10 = #{field10}</if>
+		<if test='field11 != null and field11 != ""'>AND field11 = #{field11}</if>
+		<if test='field14 != null and field14 != ""'>AND field14 = #{field14}</if>
+		<if test='field15 != null and field15 != ""'>AND field15 = #{field15}</if>
+	</select>
+</mapper>

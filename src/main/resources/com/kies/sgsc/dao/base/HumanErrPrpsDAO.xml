@@ -1,0 +1,380 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.HumanErrPrpsDAO">
+
+	<select id="get7DayRiskRate" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				substr(props_ymdhis,1,8) props_ymd, max(work_err_rate) risk_rate
+			FROM tb_human_err_prps
+			WHERE substr(props_ymdhis,1,8) BETWEEN 
+				DATE_FORMAT(date_add(STR_TO_DATE(#{props_ymd},'%Y%m%d'),INTERVAL -7 DAY), '%y/%m/%d')
+				  AND #{props_ymd}
+			GROUP BY substr(props_ymdhis,1,8)
+		]]>
+	</select>
+	
+	<select id="getDayRiskRate" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				IFNULL(ROUND(IFNULL(SUM(CASE WHEN work_err_rate >= ${err_rate} THEN 1 ELSE 0 END),0) / COUNT(1) * 100,2),0) AS FL ,
+				IFNULL(100 - ROUND(IFNULL(SUM(CASE WHEN work_err_rate >=  ${err_rate} THEN 1 ELSE 0 END),0) / COUNT(1) * 100,2),0) AS SC
+			FROM tb_human_err_prps
+			WHERE substr(props_ymdhis,1,8) = #{props_ymd}
+		]]>
+	</select>
+
+	<insert id="insertHumanErrPrps">
+		<![CDATA[
+			INSERT INTO tb_human_err_prps (
+				props_sid
+				,props_ymdhis
+				,facty_id
+				,procs_id
+				,eqmt_id
+				,work_type_cd
+				,unit_procs_cd
+				,description
+				,real_rise_dt
+				,real_cmpt_dt
+				,work_err_rate
+				,jnl_sid
+				,regst_date
+				,regst_id
+				,update_date
+				,update_id
+			) VALUES (
+				#{props_sid}
+				,#{props_ymdhis}
+				,#{facty_id}
+				,#{procs_id}
+				,#{eqmt_id}
+				,#{work_type_cd}
+				,#{unit_procs_cd}
+				,#{description}
+				,#{real_rise_dt}
+				,#{real_cmpt_dt}
+				,#{work_err_rate}
+				,#{jnl_sid}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regst_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+			)
+		]]>
+	</insert> 
+
+	<select id="getHumanErrPrpsKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(props_sid,2)),0) +1  ,9,'0'))
+			FROM tb_human_err_prps
+		]]>
+	</select>
+
+	<delete id="deleteHumanErrPrps">
+		<![CDATA[
+			DELETE FROM tb_human_err_prps
+			WHERE props_sid = #{props_sid}
+		]]>
+	</delete>
+
+	<update id="updateHumanErrPrps">
+		<![CDATA[
+			UPDATE tb_human_err_prps
+			SET
+		]]>
+			<if test='props_sid != null and props_sid != ""'>props_sid = #{props_sid}</if>
+			<if test='props_ymdhis != null and props_ymdhis != ""'>,props_ymdhis = #{props_ymdhis}</if>
+			<if test='facty_id != null and facty_id != ""'>,facty_id = #{facty_id}</if>
+			<if test='procs_id != null and procs_id != ""'>,procs_id = #{procs_id}</if>
+			<if test='eqmt_id != null and eqmt_id != ""'>,eqmt_id = #{eqmt_id}</if>
+			<if test='work_type_cd != null and work_type_cd != ""'>,work_type_cd = #{work_type_cd}</if>
+			<if test='unit_procs_cd != null and unit_procs_cd != ""'>,unit_procs_cd = #{unit_procs_cd}</if>
+			<if test='description != null and description != ""'>,description = #{description}</if>
+			<if test='real_rise_dt != null and real_rise_dt != ""'>,real_rise_dt = #{real_rise_dt}</if>
+			<if test='real_cmpt_dt != null and real_cmpt_dt != ""'>,real_cmpt_dt = #{real_cmpt_dt}</if>
+			<if test='work_err_rate != null and work_err_rate != ""'>,work_err_rate = #{work_err_rate}</if>
+			<if test='jnl_sid != null and jnl_sid != ""'>,jnl_sid = #{jnl_sid}</if>
+			 ,regst_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='regst_id != null and regst_id != ""'>,regst_id = #{regst_id}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+		<![CDATA[
+			WHERE props_sid = #{props_sid}
+		]]>
+	</update>
+
+	<select id="listHumanErrPrpsApp" resultType="hashmap">
+		<![CDATA[
+		SELECT
+			substr(a.props_ymdhis,1,8) as props_ymd		
+			,IFNULL( sum(case when b.WORK_STAT_CD = 'WS0003' then 1 END),0) as cmpt_cnt
+			,MAX(a.work_err_rate) as risk_rate
+		FROM tb_human_err_prps a left outer join tb_work_jnl b
+		on a.JNL_SID = b.JNL_SID
+		WHERE substr(a.props_ymdhis,1,8) between #{strt_props_ymd} and #{end_props_ymd}
+		]]>
+		<if test='facty_id != null and facty_id != ""'>AND a.facty_id = #{facty_id}</if>
+		<if test='procs_id != null and procs_id != ""'>AND a.procs_id = #{procs_id}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND a.eqmt_id = #{eqmt_id}</if>
+		<![CDATA[GROUP BY substr(a.props_ymdhis,1,8)]]>
+	</select>
+
+	<select id="getHumanErrPrps_props_sid" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				props_sid
+				,props_ymdhis
+				,facty_id
+				,procs_id
+				,eqmt_id
+				,work_type_cd
+				,unit_procs_cd
+				,description
+				,real_rise_dt
+				,real_cmpt_dt
+				,work_err_rate
+				,jnl_sid
+				,regst_date
+				,regst_id
+				,update_date
+				,update_id
+				,(SELECT t.facty_nm FROM tb_facility t WHERE t.facty_id = a.facty_id) fact_nm
+				,(SELECT t.procs_nm FROM tb_process t WHERE t.procs_id = a.procs_id) procs_nm
+				,(SELECT t.eqmt_nm FROM tb_equipment t WHERE t.eqmt_id = a.eqmt_id) eqmt_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='WORK_TYPE_CD' AND t.cd_id = a.work_type_cd) work_type_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='UNIT_PROCS_CD' AND t.cd_id = a.unit_procs_cd) unit_procs_nm
+			FROM tb_human_err_prps a
+			WHERE props_sid = #{props_sid}
+		]]>
+	</select>
+
+	<select id="listHumanErrPrps" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				props_sid
+				,props_ymdhis
+				,facty_id
+				,procs_id
+				,eqmt_id
+				,work_type_cd
+				,unit_procs_cd
+				,description
+				,real_rise_dt
+				,real_cmpt_dt
+				,work_err_rate
+				,jnl_sid
+				,regst_date
+				,regst_id
+				,update_date
+				,update_id
+				,(SELECT t.facty_nm FROM tb_facility t WHERE t.facty_id = a.facty_id) fact_nm
+				,(SELECT t.procs_nm FROM tb_process t WHERE t.procs_id = a.procs_id) procs_nm
+				,(SELECT t.eqmt_nm FROM tb_equipment t WHERE t.eqmt_id = a.eqmt_id) eqmt_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='WORK_TYPE_CD' AND t.cd_id = a.work_type_cd) work_type_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='UNIT_PROCS_CD' AND t.cd_id = a.unit_procs_cd) unit_procs_nm
+			FROM tb_human_err_prps a
+			WHERE 1=1
+		]]>
+		<if test='props_sid != null and props_sid != ""'>AND props_sid = #{props_sid}</if>
+		<if test='props_ymdhis != null and props_ymdhis != ""'>AND props_ymdhis = #{props_ymdhis}</if>
+		<if test='props_ymd != null and props_ymd != ""'>AND substr(a.props_ymdhis,1,8) = #{props_ymd}</if>
+		<if test='facty_id != null and facty_id != ""'>AND facty_id = #{facty_id}</if>
+		<if test='procs_id != null and procs_id != ""'>AND procs_id = #{procs_id}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND eqmt_id = #{eqmt_id}</if>
+		<if test='work_type_cd != null and work_type_cd != ""'>AND work_type_cd = #{work_type_cd}</if>
+		<if test='unit_procs_cd != null and unit_procs_cd != ""'>AND unit_procs_cd = #{unit_procs_cd}</if>
+		<if test='description != null and description != ""'>AND description = #{description}</if>
+		
+		<if test='strt_real_rise_dt != null and strt_real_rise_dt != ""'><![CDATA[AND real_rise_dt >= #{strt_real_rise_dt}]]></if>
+		<if test='end_real_rise_dt != null and end_real_rise_dt != ""'><![CDATA[AND real_rise_dt =< #{end_real_rise_dt}]]></if>
+		
+		<if test='real_cmpt_dt != null and real_cmpt_dt != ""'>AND real_cmpt_dt = #{real_cmpt_dt}</if>
+		<if test='work_err_rate != null and work_err_rate != ""'>AND work_err_rate = #{work_err_rate}</if>
+		<if test='jnl_sid != null and jnl_sid != ""'>AND jnl_sid = #{jnl_sid}</if>
+		<if test='regst_date != null and regst_date != ""'>AND regst_date = #{regst_date}</if>
+		<if test='regst_id != null and regst_id != ""'>AND regst_id = #{regst_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+		<if test='strt_props_ymd != null and strt_props_ymd != ""'>AND substr(a.props_ymdhis,1,8) between #{strt_props_ymd} and #{end_props_ymd}</if>
+	</select>
+
+	<select id="pageHumanErrPrps" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						props_sid
+						,props_ymdhis
+						,facty_id
+						,procs_id
+						,eqmt_id
+						,work_type_cd
+						,unit_procs_cd
+						,description
+						,real_rise_dt
+						,real_cmpt_dt
+						,work_err_rate
+						,jnl_sid
+						,regst_date
+						,regst_id
+						,update_date
+						,update_id
+						,(SELECT t.facty_nm FROM tb_facility t WHERE t.facty_id = a.facty_id) fact_nm
+						,(SELECT t.procs_nm FROM tb_process t WHERE t.procs_id = a.procs_id) procs_nm
+						,(SELECT t.eqmt_nm FROM tb_equipment t WHERE t.eqmt_id = a.eqmt_id) eqmt_nm
+						,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='WORK_TYPE_CD' AND t.cd_id = a.work_type_cd) work_type_nm
+						,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='UNIT_PROCS_CD' AND t.cd_id = a.unit_procs_cd) unit_procs_nm
+					FROM tb_human_err_prps a
+					WHERE 1 = 1 
+		]]>
+					<if test='props_sid != null and props_sid != ""'> AND props_sid = #{props_sid}</if>
+					<if test='props_ymdhis != null and props_ymdhis != ""'> AND props_ymdhis = #{props_ymdhis}</if>
+					<if test='facty_id != null and facty_id != ""'> AND facty_id = #{facty_id}</if>
+					<if test='procs_id != null and procs_id != ""'> AND procs_id = #{procs_id}</if>
+					<if test='eqmt_id != null and eqmt_id != ""'> AND eqmt_id = #{eqmt_id}</if>
+					<if test='work_type_cd != null and work_type_cd != ""'> AND work_type_cd = #{work_type_cd}</if>
+					<if test='unit_procs_cd != null and unit_procs_cd != ""'> AND unit_procs_cd = #{unit_procs_cd}</if>
+					<if test='description != null and description != ""'> AND description = #{description}</if>
+					
+					<if test='strt_real_rise_dt != null and strt_real_rise_dt != ""'><![CDATA[AND real_rise_dt >= #{strt_real_rise_dt}]]></if>
+					<if test='end_real_rise_dt != null and end_real_rise_dt != ""'><![CDATA[AND real_rise_dt =< #{end_real_rise_dt}]]></if>
+					
+					<if test='real_cmpt_dt != null and real_cmpt_dt != ""'> AND real_cmpt_dt = #{real_cmpt_dt}</if>
+					<if test='work_err_rate != null and work_err_rate != ""'> AND work_err_rate = #{work_err_rate}</if>
+					<if test='jnl_sid != null and jnl_sid != ""'> AND jnl_sid = #{jnl_sid}</if>
+					<if test='regst_date != null and regst_date != ""'> AND regst_date = #{regst_date}</if>
+					<if test='regst_id != null and regst_id != ""'> AND regst_id = #{regst_id}</if>
+					<if test='update_date != null and update_date != ""'> AND update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND update_id = #{update_id}</if>
+					<if test='props_ymd != null and props_ymd != ""'>AND substr(a.props_ymdhis,1,8) = #{props_ymd}</if>
+					<if test='strt_props_ymd != null and strt_props_ymd != ""'>AND substr(a.props_ymdhis,1,8) between #{strt_props_ymd} and #{end_props_ymd}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countHumanErrPrps" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tb_human_err_prps a
+			WHERE 1 = 1 
+		]]>
+		<if test='props_sid != null and props_sid != ""'>AND props_sid = #{props_sid}</if>
+		<if test='props_ymdhis != null and props_ymdhis != ""'>AND props_ymdhis = #{props_ymdhis}</if>
+		<if test='facty_id != null and facty_id != ""'>AND facty_id = #{facty_id}</if>
+		<if test='procs_id != null and procs_id != ""'>AND procs_id = #{procs_id}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND eqmt_id = #{eqmt_id}</if>
+		<if test='work_type_cd != null and work_type_cd != ""'>AND work_type_cd = #{work_type_cd}</if>
+		<if test='unit_procs_cd != null and unit_procs_cd != ""'>AND unit_procs_cd = #{unit_procs_cd}</if>
+		<if test='description != null and description != ""'>AND description = #{description}</if>
+		
+		<if test='strt_real_rise_dt != null and strt_real_rise_dt != ""'><![CDATA[AND real_rise_dt >= #{strt_real_rise_dt}]]></if>
+		<if test='end_real_rise_dt != null and end_real_rise_dt != ""'><![CDATA[AND real_rise_dt =< #{end_real_rise_dt}]]></if>
+		
+		<if test='real_cmpt_dt != null and real_cmpt_dt != ""'>AND real_cmpt_dt = #{real_cmpt_dt}</if>
+		<if test='work_err_rate != null and work_err_rate != ""'>AND work_err_rate = #{work_err_rate}</if>
+		<if test='jnl_sid != null and jnl_sid != ""'>AND jnl_sid = #{jnl_sid}</if>
+		<if test='regst_date != null and regst_date != ""'>AND regst_date = #{regst_date}</if>
+		<if test='regst_id != null and regst_id != ""'>AND regst_id = #{regst_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+		<if test='props_ymd != null and props_ymd != ""'>AND substr(a.props_ymdhis,1,8) = #{props_ymd}</if>
+		<if test='strt_props_ymd != null and strt_props_ymd != ""'>AND substr(a.props_ymdhis,1,8) between #{strt_props_ymd} and #{end_props_ymd}</if>
+	</select>
+	
+	
+	
+	
+	
+	
+	
+	<select id="pageHumanErrPrpsApp" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						substr(a.props_ymdhis,1,8) as props_ymd		
+						,IFNULL( sum(case when b.WORK_STAT_CD = 'WS0003' then 1 END),0) as cmpt_cnt
+						,MAX(a.work_err_rate) as risk_rate
+					FROM tb_human_err_prps a left outer join tb_work_jnl b
+					on a.JNL_SID = b.JNL_SID
+					WHERE 1 = 1 
+		]]>
+					<if test='props_sid != null and props_sid != ""'> AND a.props_sid = #{props_sid}</if>
+					<if test='props_ymdhis != null and props_ymdhis != ""'> AND a.props_ymdhis = #{props_ymdhis}</if>
+					<if test='facty_id != null and facty_id != ""'> AND a.facty_id = #{facty_id}</if>
+					<if test='procs_id != null and procs_id != ""'> AND a.procs_id = #{procs_id}</if>
+					<if test='eqmt_id != null and eqmt_id != ""'> AND a.eqmt_id = #{eqmt_id}</if>
+					<if test='work_type_cd != null and work_type_cd != ""'> AND a.work_type_cd = #{work_type_cd}</if>
+					<if test='unit_procs_cd != null and unit_procs_cd != ""'> AND a.unit_procs_cd = #{unit_procs_cd}</if>
+					<if test='description != null and description != ""'> AND a.description = #{description}</if>
+					<if test='strt_real_rise_dt != null and strt_real_rise_dt != ""'><![CDATA[AND a.real_rise_dt >= #{strt_real_rise_dt}]]></if>
+					<if test='end_real_rise_dt != null and end_real_rise_dt != ""'><![CDATA[AND a.real_rise_dt =< #{end_real_rise_dt}]]></if>
+					<if test='real_cmpt_dt != null and real_cmpt_dt != ""'> AND a.real_cmpt_dt = #{real_cmpt_dt}</if>
+					<if test='work_err_rate != null and work_err_rate != ""'> AND a.work_err_rate = #{work_err_rate}</if>
+					<if test='jnl_sid != null and jnl_sid != ""'> AND a.jnl_sid = #{jnl_sid}</if>
+					<if test='regst_date != null and regst_date != ""'> AND a.regst_date = #{regst_date}</if>
+					<if test='regst_id != null and regst_id != ""'> AND a.regst_id = #{regst_id}</if>
+					<if test='update_date != null and update_date != ""'> AND a.update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND a.update_id = #{update_id}</if>
+					<if test='props_ymd != null and props_ymd != ""'>AND substr(a.props_ymdhis,1,8) = #{props_ymd}</if>
+					<if test='strt_props_ymd != null and strt_props_ymd != ""'>AND substr(a.props_ymdhis,1,8) between #{strt_props_ymd} and #{end_props_ymd}</if>
+		<![CDATA[
+					GROUP BY substr(a.props_ymdhis,1,8)
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countHumanErrPrpsApp" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			from (
+				select
+				substr(a.props_ymdhis,1,8) as props_ymd		
+						,MAX(a.work_err_rate) as risk_rate
+				FROM tb_human_err_prps a left outer join tb_work_jnl b
+				on a.JNL_SID = b.JNL_SID
+				WHERE 1 = 1 
+		]]>
+					<if test='props_sid != null and props_sid != ""'> AND a.props_sid = #{props_sid}</if>
+					<if test='props_ymdhis != null and props_ymdhis != ""'> AND a.props_ymdhis = #{props_ymdhis}</if>
+					<if test='facty_id != null and facty_id != ""'> AND a.facty_id = #{facty_id}</if>
+					<if test='procs_id != null and procs_id != ""'> AND a.procs_id = #{procs_id}</if>
+					<if test='eqmt_id != null and eqmt_id != ""'> AND a.eqmt_id = #{eqmt_id}</if>
+					<if test='work_type_cd != null and work_type_cd != ""'> AND a.work_type_cd = #{work_type_cd}</if>
+					<if test='unit_procs_cd != null and unit_procs_cd != ""'> AND a.unit_procs_cd = #{unit_procs_cd}</if>
+					<if test='description != null and description != ""'> AND a.description = #{description}</if>
+					<if test='strt_real_rise_dt != null and strt_real_rise_dt != ""'><![CDATA[AND a.real_rise_dt >= #{strt_real_rise_dt}]]></if>
+					<if test='end_real_rise_dt != null and end_real_rise_dt != ""'><![CDATA[AND a.real_rise_dt =< #{end_real_rise_dt}]]></if>
+					<if test='real_cmpt_dt != null and real_cmpt_dt != ""'> AND a.real_cmpt_dt = #{real_cmpt_dt}</if>
+					<if test='work_err_rate != null and work_err_rate != ""'> AND a.work_err_rate = #{work_err_rate}</if>
+					<if test='jnl_sid != null and jnl_sid != ""'> AND a.jnl_sid = #{jnl_sid}</if>
+					<if test='regst_date != null and regst_date != ""'> AND a.regst_date = #{regst_date}</if>
+					<if test='regst_id != null and regst_id != ""'> AND a.regst_id = #{regst_id}</if>
+					<if test='update_date != null and update_date != ""'> AND a.update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND a.update_id = #{update_id}</if>
+					<if test='props_ymd != null and props_ymd != ""'>AND substr(a.props_ymdhis,1,8) = #{props_ymd}</if>
+					<if test='strt_props_ymd != null and strt_props_ymd != ""'>AND substr(a.props_ymdhis,1,8) between #{strt_props_ymd} and #{end_props_ymd}</if>
+			<![CDATA[
+					GROUP BY substr(a.props_ymdhis,1,8)
+				) A		
+			]]>	
+	</select>
+</mapper>

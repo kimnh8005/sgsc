@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.EquipmentDAO">
+
+	<insert id="insertEquipment">
+		<![CDATA[
+			INSERT INTO tb_equipment (
+				eqmt_id
+				,procs_id
+				,eqmt_type_cd
+				,eqmt_nm
+				,use_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			) VALUES (
+				#{eqmt_id}
+				,#{procs_id}
+				,#{eqmt_type_cd}
+				,#{eqmt_nm}
+				,#{use_yn}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regist_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+			)
+		]]>
+	</insert> 
+
+	<select id="getEquipmentKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(eqmt_id,2)),0) +1  ,9,'0'))
+			FROM tb_equipment
+		]]>
+	</select>
+
+	<delete id="deleteEquipment">
+		<![CDATA[
+			DELETE FROM tb_equipment
+			WHERE eqmt_id = #{eqmt_id}
+		]]>
+	</delete>
+
+	<update id="updateEquipment">
+		<![CDATA[
+			UPDATE tb_equipment
+			SET
+		]]>
+			<if test='eqmt_id != null and eqmt_id != ""'>eqmt_id = #{eqmt_id}</if>
+			<if test='procs_id != null and procs_id != ""'>,procs_id = #{procs_id}</if>
+			<if test='eqmt_type_cd != null and eqmt_type_cd != ""'>,eqmt_type_cd = #{eqmt_type_cd}</if>
+			<if test='eqmt_nm != null and eqmt_nm != ""'>,eqmt_nm = #{eqmt_nm}</if>
+			<if test='use_yn != null and use_yn != ""'>,use_yn = #{use_yn}</if>
+			 ,regist_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='regist_id != null and regist_id != ""'>,regist_id = #{regist_id}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+		<![CDATA[
+			WHERE eqmt_id = #{eqmt_id}
+		]]>
+	</update>
+
+	<select id="getEquipment_eqmt_id" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				a.eqmt_id
+				,a.procs_id
+				,b.procs_nm
+				,b.facty_id
+				,b.facty_nm
+				,a.eqmt_type_cd
+				,(SELECT 
+						c.CD_NM 
+				  FROM tc_common_code c 
+				  WHERE CD_GRP_ID='EQMT_TYPE_CD' 
+				  AND c.cd_id = a.eqmt_type_cd) eqmt_type_nm
+				,a.eqmt_nm
+				,a.use_yn
+				,a.regist_date
+				,a.regist_id
+				,a.update_date
+				,a.update_id				
+			FROM tb_equipment a , vw_process b
+			WHERE a.procs_id = b.procs_id
+			AND a.eqmt_id = #{eqmt_id}
+		]]>
+	</select>
+
+	<select id="listEquipment" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				a.eqmt_id
+				,a.procs_id
+				,b.procs_nm
+				,b.facty_id
+				,b.facty_nm
+				,a.eqmt_type_cd
+				,(SELECT 
+						c.CD_NM 
+				  FROM tc_common_code c 
+				  WHERE CD_GRP_ID='EQMT_TYPE_CD' 
+				  AND c.cd_id = a.eqmt_type_cd) eqmt_type_nm
+				,a.eqmt_nm
+				,a.use_yn
+				,a.regist_date
+				,a.regist_id
+				,a.update_date
+				,a.update_id				
+			FROM tb_equipment a , vw_process b
+			WHERE a.procs_id = b.procs_id
+		]]>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND a.eqmt_id = #{eqmt_id}</if>
+		<if test='procs_id != null and procs_id != ""'>AND a.procs_id = #{procs_id}</if>
+		<if test='eqmt_type_cd != null and eqmt_type_cd != ""'>AND a.eqmt_type_cd = #{eqmt_type_cd}</if>
+		<if test='eqmt_nm != null and eqmt_nm != ""'>AND a.eqmt_nm = #{eqmt_nm}</if>
+		<if test='use_yn != null and use_yn != ""'>AND a.use_yn = #{use_yn}</if>
+		<if test='regist_date != null and regist_date != ""'>AND a.regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND a.regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND a.update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND a.update_id = #{update_id}</if>
+	</select>
+
+	<select id="pageEquipment" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						a.eqmt_id
+						,a.procs_id
+						,b.procs_nm
+						,b.facty_id
+						,b.facty_nm
+						,a.eqmt_type_cd
+						,(SELECT 
+								c.CD_NM 
+						  FROM tc_common_code c 
+						  WHERE CD_GRP_ID='EQMT_TYPE_CD' 
+						  AND c.cd_id = a.eqmt_type_cd) eqmt_type_nm
+						,a.eqmt_nm
+						,a.use_yn
+						,a.regist_date
+						,a.regist_id
+						,a.update_date
+						,a.update_id				
+					FROM tb_equipment a , vw_process b
+					WHERE a.procs_id = b.procs_id
+		]]>
+					<if test='eqmt_id != null and eqmt_id != ""'> AND a.eqmt_id = #{eqmt_id}</if>
+					<if test='procs_id != null and procs_id != ""'> AND a.procs_id = #{procs_id}</if>
+					<if test='eqmt_type_cd != null and eqmt_type_cd != ""'> AND a.eqmt_type_cd = #{eqmt_type_cd}</if>
+					<if test='eqmt_nm != null and eqmt_nm != ""'> AND a.eqmt_nm = #{eqmt_nm}</if>
+					<if test='use_yn != null and use_yn != ""'> AND a.use_yn = #{use_yn}</if>
+					<if test='regist_date != null and regist_date != ""'> AND a.regist_date = #{regist_date}</if>
+					<if test='regist_id != null and regist_id != ""'> AND a.regist_id = #{regist_id}</if>
+					<if test='update_date != null and update_date != ""'> AND a.update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND a.update_id = #{update_id}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countEquipment" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tb_equipment
+			WHERE 1 = 1 
+		]]>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND eqmt_id = #{eqmt_id}</if>
+		<if test='procs_id != null and procs_id != ""'>AND procs_id = #{procs_id}</if>
+		<if test='eqmt_type_cd != null and eqmt_type_cd != ""'>AND eqmt_type_cd = #{eqmt_type_cd}</if>
+		<if test='eqmt_nm != null and eqmt_nm != ""'>AND eqmt_nm = #{eqmt_nm}</if>
+		<if test='use_yn != null and use_yn != ""'>AND use_yn = #{use_yn}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+	
+	
+	<select id="getEquipment_all_name" resultType="hashmap">
+		<![CDATA[
+		SELECT 
+			distinct(EQMT_ID) as eqmt_id, 
+			EQMT_NM as eqmt_nm,
+			PROCS_ID,
+    		EQMT_TYPE_CD 
+		FROM tb_equipment
+		WHERE  1=1
+		]]>
+	</select>
+	
+</mapper>

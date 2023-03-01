@@ -1,0 +1,300 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.WorkJnlDAO">
+
+	<insert id="insertWorkJnl">
+		<![CDATA[
+			INSERT INTO tb_work_jnl (
+				jnl_sid
+				,facty_id
+				,procs_id
+				,eqmt_id
+				,user_id
+				,work_type_cd
+				,unit_procs_cd
+				,description
+				,work_stat_cd
+				,goal_strt_dt
+				,goal_cmpt_dt
+				,real_strt_dt
+				,real_cmpt_dt
+				,wrk_dept_cd
+				,work_cmd_cnt
+				,spcl_prbm
+				,wrk_user_id
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			) VALUES (
+				#{jnl_sid}
+				,#{facty_id}
+				,#{procs_id}
+				,#{eqmt_id}
+				,#{user_id}
+				,#{work_type_cd}
+				,#{unit_procs_cd}
+				,#{description}
+				,#{work_stat_cd}
+				,#{goal_strt_dt}
+				,#{goal_cmpt_dt}
+				,#{real_strt_dt}
+				,#{real_cmpt_dt}
+				,#{wrk_dept_cd}
+				,#{work_cmd_cnt}
+				,#{spcl_prbm}
+				,#{wrk_user_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regist_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+			)
+		]]>
+	</insert> 
+
+	<select id="getWorkJnlKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(jnl_sid,2)),0) +1  ,9,'0'))
+			FROM tb_work_jnl
+		]]>
+	</select>
+
+	<delete id="deleteWorkJnl">
+		<![CDATA[
+			DELETE FROM tb_work_jnl
+			WHERE jnl_sid = #{jnl_sid}
+		]]>
+	</delete>
+
+	<update id="updateWorkJnl">
+		<![CDATA[
+			UPDATE tb_work_jnl
+			SET
+		]]>
+			<if test='jnl_sid != null and jnl_sid != ""'>jnl_sid = #{jnl_sid}</if>
+			<if test='facty_id != null and facty_id != ""'>,facty_id = #{facty_id}</if>
+			<if test='procs_id != null and procs_id != ""'>,procs_id = #{procs_id}</if>
+			<if test='eqmt_id != null and eqmt_id != ""'>,eqmt_id = #{eqmt_id}</if>
+			<if test='user_id != null and user_id != ""'>,user_id = #{user_id}</if>
+			<if test='work_type_cd != null and work_type_cd != ""'>,work_type_cd = #{work_type_cd}</if>
+			<if test='unit_procs_cd != null and unit_procs_cd != ""'>,unit_procs_cd = #{unit_procs_cd}</if>
+			<if test='description != null and description != ""'>,description = #{description}</if>
+			<if test='work_stat_cd != null and work_stat_cd != ""'>,work_stat_cd = #{work_stat_cd}</if>
+			<if test='goal_strt_dt != null and goal_strt_dt != ""'>,goal_strt_dt = #{goal_strt_dt}</if>
+			<if test='goal_cmpt_dt != null and goal_cmpt_dt != ""'>,goal_cmpt_dt = #{goal_cmpt_dt}</if>
+			<if test='real_strt_dt != null and real_strt_dt != ""'>,real_strt_dt = #{real_strt_dt}</if>
+			<if test='real_cmpt_dt != null and real_cmpt_dt != ""'>,real_cmpt_dt = #{real_cmpt_dt}</if>
+			<if test='wrk_dept_cd != null and wrk_dept_cd != ""'>,wrk_dept_cd = #{wrk_dept_cd}</if>
+			<if test='work_cmd_cnt != null and work_cmd_cnt != ""'>,work_cmd_cnt = #{work_cmd_cnt}</if>
+			<if test='spcl_prbm != null and spcl_prbm != ""'>,spcl_prbm = #{spcl_prbm}</if>
+			<if test='wrk_user_id != null and wrk_user_id != ""'>,wrk_user_id = #{wrk_user_id}</if>
+			 ,regist_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='regist_id != null and regist_id != ""'>,regist_id = #{regist_id}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+		<![CDATA[
+			WHERE jnl_sid = #{jnl_sid}
+		]]>
+	</update>
+
+	<select id="getWorkJnl_jnl_sid" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				jnl_sid
+				,facty_id
+				,procs_id
+				,eqmt_id
+				,user_id
+				,work_type_cd
+				,unit_procs_cd
+				,description
+				,work_stat_cd
+				,goal_strt_dt
+				,goal_cmpt_dt
+				,real_strt_dt
+				,real_cmpt_dt
+				,wrk_dept_cd
+				,work_cmd_cnt
+				,spcl_prbm
+				,wrk_user_id
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='DEPT_CD' AND t.cd_id = a.wrk_dept_cd) wrk_dept_nm
+				,(SELECT t.facty_nm FROM tb_facility t WHERE t.facty_id = a.facty_id) fact_nm
+				,(SELECT t.procs_nm FROM tb_process t WHERE t.procs_id = a.procs_id) procs_nm
+				,(SELECT t.eqmt_nm FROM tb_equipment t WHERE t.eqmt_id = a.eqmt_id) eqmt_nm
+				,(SELECT t.user_nm FROM tb_user t WHERE t.user_id = a.wrk_user_id) wrk_user_nm
+				,(SELECT t.user_nm FROM tb_user t WHERE t.user_id = a.user_id) user_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='WORK_TYPE_CD' AND t.cd_id = a.work_type_cd) work_type_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='WORK_STAT_CD' AND t.cd_id = a.work_stat_cd) work_stat_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='UNIT_PROCS_CD' AND t.cd_id = a.unit_procs_cd) unit_procs_nm
+			FROM tb_work_jnl a
+			WHERE jnl_sid = #{jnl_sid}
+		]]>
+	</select>
+
+	<select id="listWorkJnl" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				jnl_sid
+				,facty_id
+				,procs_id
+				,eqmt_id
+				,user_id
+				,work_type_cd
+				,unit_procs_cd
+				,description
+				,work_stat_cd
+				,goal_strt_dt
+				,goal_cmpt_dt
+				,real_strt_dt
+				,real_cmpt_dt
+				,wrk_dept_cd
+				,work_cmd_cnt
+				,spcl_prbm
+				,wrk_user_id
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='DEPT_CD' AND t.cd_id = a.wrk_dept_cd) wrk_dept_nm
+				,(SELECT t.facty_nm FROM tb_facility t WHERE t.facty_id = a.facty_id) fact_nm
+				,(SELECT t.procs_nm FROM tb_process t WHERE t.procs_id = a.procs_id) procs_nm
+				,(SELECT t.eqmt_nm FROM tb_equipment t WHERE t.eqmt_id = a.eqmt_id) eqmt_nm
+				,(SELECT t.user_nm FROM tb_user t WHERE t.user_id = a.wrk_user_id) wrk_user_nm
+				,(SELECT t.user_nm FROM tb_user t WHERE t.user_id = a.user_id) user_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='WORK_TYPE_CD' AND t.cd_id = a.work_type_cd) work_type_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='WORK_STAT_CD' AND t.cd_id = a.work_stat_cd) work_stat_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='UNIT_PROCS_CD' AND t.cd_id = a.unit_procs_cd) unit_procs_nm
+			FROM tb_work_jnl a
+			WHERE 1=1
+		]]>
+		<if test='jnl_sid != null and jnl_sid != ""'>AND jnl_sid = #{jnl_sid}</if>
+		<if test='facty_id != null and facty_id != ""'>AND facty_id = #{facty_id}</if>
+		<if test='procs_id != null and procs_id != ""'>AND procs_id = #{procs_id}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND eqmt_id = #{eqmt_id}</if>
+		<if test='user_id != null and user_id != ""'>AND user_id = #{user_id}</if>
+		<if test='work_type_cd != null and work_type_cd != ""'>AND work_type_cd = #{work_type_cd}</if>
+		<if test='unit_procs_cd != null and unit_procs_cd != ""'>AND unit_procs_cd = #{unit_procs_cd}</if>
+		<if test='description != null and description != ""'>AND description = #{description}</if>
+		<if test='work_stat_cd != null and work_stat_cd != ""'>AND work_stat_cd = #{work_stat_cd}</if>
+		
+		<if test='goal_strt_dt != null and goal_strt_dt != ""'><![CDATA[AND goal_strt_dt >= #{goal_strt_dt}]]></if>
+		<if test='goal_cmpt_dt != null and goal_cmpt_dt != ""'><![CDATA[AND goal_cmpt_dt <= #{goal_cmpt_dt}]]></if>
+		
+		<if test='real_strt_dt != null and real_strt_dt != ""'>AND real_strt_dt = #{real_strt_dt}</if>
+		<if test='real_cmpt_dt != null and real_cmpt_dt != ""'>AND real_cmpt_dt = #{real_cmpt_dt}</if>
+		<if test='wrk_dept_cd != null and wrk_dept_cd != ""'>AND wrk_dept_cd = #{wrk_dept_cd}</if>
+		<if test='work_cmd_cnt != null and work_cmd_cnt != ""'>AND work_cmd_cnt = #{work_cmd_cnt}</if>
+		<if test='spcl_prbm != null and spcl_prbm != ""'>AND spcl_prbm = #{spcl_prbm}</if>
+		<if test='wrk_user_id != null and wrk_user_id != ""'>AND wrk_user_id = #{wrk_user_id}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+
+	<select id="pageWorkJnl" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						jnl_sid
+						,facty_id
+						,procs_id
+						,eqmt_id
+						,user_id
+						,work_type_cd
+						,unit_procs_cd
+						,description
+						,work_stat_cd
+						,goal_strt_dt
+						,goal_cmpt_dt
+						,real_strt_dt
+						,real_cmpt_dt
+						,wrk_dept_cd
+						,work_cmd_cnt
+						,spcl_prbm
+						,wrk_user_id
+						,regist_date
+						,regist_id
+						,update_date
+						,update_id
+						,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='DEPT_CD' AND t.cd_id = a.wrk_dept_cd) wrk_dept_nm
+						,(SELECT t.facty_nm FROM tb_facility t WHERE t.facty_id = a.facty_id) fact_nm
+						,(SELECT t.procs_nm FROM tb_process t WHERE t.procs_id = a.procs_id) procs_nm
+						,(SELECT t.eqmt_nm FROM tb_equipment t WHERE t.eqmt_id = a.eqmt_id) eqmt_nm
+						,(SELECT t.user_nm FROM tb_user t WHERE t.user_id = a.wrk_user_id) wrk_user_nm
+						,(SELECT t.user_nm FROM tb_user t WHERE t.user_id = a.user_id) user_nm
+						,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='WORK_TYPE_CD' AND t.cd_id = a.work_type_cd) work_type_nm
+						,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='WORK_STAT_CD' AND t.cd_id = a.work_stat_cd) work_stat_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='UNIT_PROCS_CD' AND t.cd_id = a.unit_procs_cd) unit_procs_nm
+					FROM tb_work_jnl a
+					WHERE 1 = 1 
+		]]>
+					<if test='jnl_sid != null and jnl_sid != ""'> AND jnl_sid = #{jnl_sid}</if>
+					<if test='facty_id != null and facty_id != ""'> AND facty_id = #{facty_id}</if>
+					<if test='procs_id != null and procs_id != ""'> AND procs_id = #{procs_id}</if>
+					<if test='eqmt_id != null and eqmt_id != ""'> AND eqmt_id = #{eqmt_id}</if>
+					<if test='user_id != null and user_id != ""'> AND user_id = #{user_id}</if>
+					<if test='work_type_cd != null and work_type_cd != ""'> AND work_type_cd = #{work_type_cd}</if>
+					<if test='unit_procs_cd != null and unit_procs_cd != ""'> AND unit_procs_cd = #{unit_procs_cd}</if>
+					<if test='description != null and description != ""'> AND description = #{description}</if>
+					<if test='work_stat_cd != null and work_stat_cd != ""'> AND work_stat_cd = #{work_stat_cd}</if>
+					<if test='goal_strt_dt != null and goal_strt_dt != ""'><![CDATA[AND goal_strt_dt >= #{goal_strt_dt}]]></if>
+					<if test='goal_cmpt_dt != null and goal_cmpt_dt != ""'><![CDATA[AND goal_cmpt_dt <= #{goal_cmpt_dt}]]></if>
+					<if test='real_strt_dt != null and real_strt_dt != ""'> AND real_strt_dt = #{real_strt_dt}</if>
+					<if test='real_cmpt_dt != null and real_cmpt_dt != ""'> AND real_cmpt_dt = #{real_cmpt_dt}</if>
+					<if test='wrk_dept_cd != null and wrk_dept_cd != ""'> AND wrk_dept_cd = #{wrk_dept_cd}</if>
+					<if test='work_cmd_cnt != null and work_cmd_cnt != ""'> AND work_cmd_cnt = #{work_cmd_cnt}</if>
+					<if test='spcl_prbm != null and spcl_prbm != ""'> AND spcl_prbm = #{spcl_prbm}</if>
+					<if test='wrk_user_id != null and wrk_user_id != ""'> AND wrk_user_id = #{wrk_user_id}</if>
+					<if test='regist_date != null and regist_date != ""'> AND regist_date = #{regist_date}</if>
+					<if test='regist_id != null and regist_id != ""'> AND regist_id = #{regist_id}</if>
+					<if test='update_date != null and update_date != ""'> AND update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND update_id = #{update_id}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countWorkJnl" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tb_work_jnl
+			WHERE 1 = 1 
+		]]>
+		<if test='jnl_sid != null and jnl_sid != ""'>AND jnl_sid = #{jnl_sid}</if>
+		<if test='facty_id != null and facty_id != ""'>AND facty_id = #{facty_id}</if>
+		<if test='procs_id != null and procs_id != ""'>AND procs_id = #{procs_id}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND eqmt_id = #{eqmt_id}</if>
+		<if test='user_id != null and user_id != ""'>AND user_id = #{user_id}</if>
+		<if test='work_type_cd != null and work_type_cd != ""'>AND work_type_cd = #{work_type_cd}</if>
+		<if test='unit_procs_cd != null and unit_procs_cd != ""'>AND unit_procs_cd = #{unit_procs_cd}</if>
+		<if test='description != null and description != ""'>AND description = #{description}</if>
+		<if test='work_stat_cd != null and work_stat_cd != ""'>AND work_stat_cd = #{work_stat_cd}</if>
+		<if test='goal_strt_dt != null and goal_strt_dt != ""'><![CDATA[AND goal_strt_dt >= #{goal_strt_dt}]]></if>
+		<if test='goal_cmpt_dt != null and goal_cmpt_dt != ""'><![CDATA[AND goal_cmpt_dt <= #{goal_cmpt_dt}]]></if>
+		<if test='real_strt_dt != null and real_strt_dt != ""'>AND real_strt_dt = #{real_strt_dt}</if>
+		<if test='real_cmpt_dt != null and real_cmpt_dt != ""'>AND real_cmpt_dt = #{real_cmpt_dt}</if>
+		<if test='wrk_dept_cd != null and wrk_dept_cd != ""'>AND wrk_dept_cd = #{wrk_dept_cd}</if>
+		<if test='work_cmd_cnt != null and work_cmd_cnt != ""'>AND work_cmd_cnt = #{work_cmd_cnt}</if>
+		<if test='spcl_prbm != null and spcl_prbm != ""'>AND spcl_prbm = #{spcl_prbm}</if>
+		<if test='wrk_user_id != null and wrk_user_id != ""'>AND wrk_user_id = #{wrk_user_id}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+</mapper>

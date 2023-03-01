@@ -1,0 +1,97 @@
+spring.jackson.deserialization.fail_on_unknown_properties: true
+server:
+   port: 8080
+   servlet.context-path: /sgsc
+
+#spring.mvc.static-path-pattern: /static/**
+
+spring.mvc.view.prefix: /WEB-INF/jsp/
+spring.mvc.view.suffix: .jsp
+debug: true
+            
+spring:
+  datasource:
+    hikari:
+      main: 
+        driver-class-name: com.mysql.cj.jdbc.Driver
+        jdbc-url: jdbc:mysql://222.233.76.214:3306/sgscdb?serverTimezone=UTC&useUnicode=yes&characterEncoding=UTF-8&useSSL=false&zeroDateTimeBehavior=convertToNull
+        username: kies
+        password: 'Kies!q2w3e'
+      upo:
+        driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
+        jdbc-url: jdbc:sqlserver://183.99.77.192:1433;databaseName=UPO_TEST_DB
+        username: kies
+        password: 'kies21$$'
+              
+
+#spring:
+#  pid:
+#    file: /home/ubuntu/test-app/test-app.pid
+
+spring.devtools.livereload.enabled: true
+    
+spring.servlet.multipart:
+                    enabled: true  # Enable multipart uploads
+                    max-file-size: 200MB  # Max file size.
+                    max-request-size: 215MB # Max Request Size
+
+#rabbitmq
+spring.rabbitmq:
+      host: localhost
+      port: 5672
+      username : guest
+      password : guest
+    
+    
+file:
+    upload-dir: /usr/app/sgsc/file/
+
+# spring boot의 기본 properties
+#server.error:
+#  include-exception: false
+#  include-stacktrace: never # 오류 응답에 stacktrace 내용을 포함할 지 여부
+#  path: '/error' # 오류 응답을 처리할 Handler의 경로
+#  whitelabel.enabled: true # 서버 오류 발생시 브라우저에 보여줄 기본 페이지 생성 여부
+    
+myconf:
+    list:
+        - hoge
+        - fuga
+        - piyo
+
+session:
+  skip-url:
+    - /sys/login
+    - /sys/logout
+    - /error
+    - /login
+    - /log/*
+    - /
+    - /css/*
+    - /js/*
+    - /img/*
+    - /**/*.ico
+    - /index.html   
+    - /comm/notidown/*
+    - /comm/indtmualdown/*
+    - /**/*.gif
+    - /**/*.jpg
+    - /**/*.png
+    - /analysis/*
+    - /support/*
+    - /proposition/*
+    - /cps/*
+    - /work/*
+    - /notice/*
+  check: true
+
+kafka.bootstrap.servers: localhost:9092
+kafka.retries: 0
+kafka.batch.size: 4096
+kafka.linger.ms: 1
+kafka.buffer.memory: 40960
+kafka.username: username
+kafka.password: password
+kafka.enable.auto.commit: false
+kafka.ackmode: MANUAL
+kafka.offset.reset: latest

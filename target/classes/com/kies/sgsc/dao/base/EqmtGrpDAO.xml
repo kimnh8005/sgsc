@@ -1,0 +1,163 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.EqmtGrpDAO">
+
+	<insert id="insertEqmtGrp">
+		<![CDATA[
+			INSERT INTO tb_eqmt_grp (
+				grp_sid
+				,eqmt_id
+				,relatn_eqmt_id
+				,inout_type_cd
+				,description
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			) VALUES (
+				#{grp_sid}
+				,#{eqmt_id}
+				,#{relatn_eqmt_id}
+				,#{inout_type_cd}
+				,#{description}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regist_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+			)
+		]]>
+	</insert> 
+
+	<select id="getEqmtGrpKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(grp_sid,2)),0) +1  ,9,'0'))
+			FROM tb_eqmt_grp
+		]]>
+	</select>
+
+	<delete id="deleteEqmtGrp">
+		<![CDATA[
+			DELETE FROM tb_eqmt_grp
+			WHERE grp_sid = #{grp_sid}
+		]]>
+	</delete>
+
+	<update id="updateEqmtGrp">
+		<![CDATA[
+			UPDATE tb_eqmt_grp
+			SET
+		]]>
+			<if test='grp_sid != null and grp_sid != ""'>grp_sid = #{grp_sid}</if>
+			<if test='eqmt_id != null and eqmt_id != ""'>,eqmt_id = #{eqmt_id}</if>
+			<if test='relatn_eqmt_id != null and relatn_eqmt_id != ""'>,relatn_eqmt_id = #{relatn_eqmt_id}</if>
+			<if test='inout_type_cd != null and inout_type_cd != ""'>,inout_type_cd = #{inout_type_cd}</if>
+			<if test='description != null and description != ""'>,description = #{description}</if>
+			 ,regist_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='regist_id != null and regist_id != ""'>,regist_id = #{regist_id}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+		<![CDATA[
+			WHERE grp_sid = #{grp_sid}
+		]]>
+	</update>
+
+	<select id="getEqmtGrp_grp_sid" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				grp_sid
+				,eqmt_id
+				,relatn_eqmt_id
+				,inout_type_cd
+				,description
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			FROM tb_eqmt_grp
+			WHERE grp_sid = #{grp_sid}
+		]]>
+	</select>
+
+	<select id="listEqmtGrp" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				grp_sid
+				,eqmt_id
+				,relatn_eqmt_id
+				,inout_type_cd
+				,description
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			FROM tb_eqmt_grp
+			WHERE 1=1
+		]]>
+		<if test='grp_sid != null and grp_sid != ""'>AND grp_sid = #{grp_sid}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND eqmt_id = #{eqmt_id}</if>
+		<if test='relatn_eqmt_id != null and relatn_eqmt_id != ""'>AND relatn_eqmt_id = #{relatn_eqmt_id}</if>
+		<if test='inout_type_cd != null and inout_type_cd != ""'>AND inout_type_cd = #{inout_type_cd}</if>
+		<if test='description != null and description != ""'>AND description = #{description}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+
+	<select id="pageEqmtGrp" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						grp_sid
+						,eqmt_id
+						,relatn_eqmt_id
+						,inout_type_cd
+						,description
+						,regist_date
+						,regist_id
+						,update_date
+						,update_id
+					FROM tb_eqmt_grp
+					WHERE 1 = 1 
+		]]>
+					<if test='grp_sid != null and grp_sid != ""'> AND grp_sid = #{grp_sid}</if>
+					<if test='eqmt_id != null and eqmt_id != ""'> AND eqmt_id = #{eqmt_id}</if>
+					<if test='relatn_eqmt_id != null and relatn_eqmt_id != ""'> AND relatn_eqmt_id = #{relatn_eqmt_id}</if>
+					<if test='inout_type_cd != null and inout_type_cd != ""'> AND inout_type_cd = #{inout_type_cd}</if>
+					<if test='description != null and description != ""'> AND description = #{description}</if>
+					<if test='regist_date != null and regist_date != ""'> AND regist_date = #{regist_date}</if>
+					<if test='regist_id != null and regist_id != ""'> AND regist_id = #{regist_id}</if>
+					<if test='update_date != null and update_date != ""'> AND update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND update_id = #{update_id}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countEqmtGrp" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tb_eqmt_grp
+			WHERE 1 = 1 
+		]]>
+		<if test='grp_sid != null and grp_sid != ""'>AND grp_sid = #{grp_sid}</if>
+		<if test='eqmt_id != null and eqmt_id != ""'>AND eqmt_id = #{eqmt_id}</if>
+		<if test='relatn_eqmt_id != null and relatn_eqmt_id != ""'>AND relatn_eqmt_id = #{relatn_eqmt_id}</if>
+		<if test='inout_type_cd != null and inout_type_cd != ""'>AND inout_type_cd = #{inout_type_cd}</if>
+		<if test='description != null and description != ""'>AND description = #{description}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+</mapper>

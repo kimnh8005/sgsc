@@ -1,0 +1,205 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.CommonCodeDAO">
+
+	<insert id="insertCommonCode">
+		<![CDATA[
+			INSERT INTO tc_common_code (
+				cd_grp_id
+				,cd_id
+				,cd_nm
+				,cd_lvl
+				,cd_add_itm
+				,cd_prn_odr
+				,description
+				,use_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			) VALUES (
+				#{cd_grp_id}
+				,#{cd_id}
+				,#{cd_nm}
+				,#{cd_lvl}
+				,#{cd_add_itm}
+				,#{cd_prn_odr}
+				,#{description}
+				,#{use_yn}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regist_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+			)
+		]]>
+	</insert> 
+
+	<delete id="deleteCommonCode">
+		<![CDATA[
+			DELETE FROM tc_common_code
+			WHERE cd_grp_id = #{cd_grp_id}
+			AND cd_id = #{cd_id}
+		]]>
+	</delete>
+
+	<update id="updateCommonCode">
+		<![CDATA[
+			UPDATE tc_common_code
+			SET
+		]]>
+			<if test='cd_grp_id != null and cd_grp_id != ""'>cd_grp_id = #{cd_grp_id}</if>
+			<if test='cd_id != null and cd_id != ""'>,cd_id = #{cd_id}</if>
+			<if test='cd_nm != null and cd_nm != ""'>,cd_nm = #{cd_nm}</if>
+			<if test='cd_lvl != null and cd_lvl != ""'>,cd_lvl = #{cd_lvl}</if>
+			<if test='cd_add_itm != null and cd_add_itm != ""'>,cd_add_itm = #{cd_add_itm}</if>
+			<if test='cd_prn_odr != null and cd_prn_odr != ""'>,cd_prn_odr = #{cd_prn_odr}</if>
+			<if test='description != null and description != ""'>,description = #{description}</if>
+			<if test='use_yn != null and use_yn != ""'>,use_yn = #{use_yn}</if>
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+		<![CDATA[
+			WHERE cd_grp_id = #{cd_grp_id}
+			AND cd_id = #{cd_id}
+		]]>
+	</update>
+
+	<select id="listCommonCode_cd_grp_id" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				cd_grp_id
+				,cd_id
+				,cd_nm
+				,cd_lvl
+				,cd_add_itm
+				,cd_prn_odr
+				,description
+				,use_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			FROM tc_common_code
+			WHERE cd_grp_id = #{cd_grp_id}
+		]]>
+	</select>
+
+	<select id="getCommonCode_cd_id" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				cd_grp_id
+				,cd_id
+				,cd_nm
+				,cd_lvl
+				,cd_add_itm
+				,cd_prn_odr
+				,description
+				,use_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			FROM tc_common_code
+			WHERE cd_grp_id = #{cd_grp_id}
+			AND cd_id = #{cd_id}
+		]]>
+	</select>
+
+	<select id="listCommonCode" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				cd_grp_id
+				,cd_id
+				,cd_nm
+				,cd_lvl
+				,cd_add_itm
+				,cd_prn_odr
+				,description
+				,use_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,'test' as test
+			FROM tc_common_code
+			WHERE 1=1
+		]]>
+		<if test='cd_grp_id != null and cd_grp_id != ""'>AND cd_grp_id = #{cd_grp_id}</if>
+		<if test='cd_id != null and cd_id != ""'>AND cd_id = #{cd_id}</if>
+		<if test='cd_nm != null and cd_nm != ""'>AND cd_nm = #{cd_nm}</if>
+		<if test='cd_lvl != null and cd_lvl != ""'>AND cd_lvl = #{cd_lvl}</if>
+		<if test='cd_add_itm != null and cd_add_itm != ""'>AND cd_add_itm = #{cd_add_itm}</if>
+		<if test='cd_prn_odr != null and cd_prn_odr != ""'>AND cd_prn_odr = #{cd_prn_odr}</if>
+		<if test='description != null and description != ""'>AND description = #{description}</if>
+		<if test='use_yn != null and use_yn != ""'>AND use_yn = #{use_yn}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+		ORDER BY cd_grp_id,cd_prn_odr
+	</select>
+
+	<select id="pageCommonCode" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						cd_grp_id
+						,cd_id
+						,cd_nm
+						,cd_lvl
+						,cd_add_itm
+						,cd_prn_odr
+						,description
+						,use_yn
+						,regist_date
+						,regist_id
+						,update_date
+						,update_id
+					FROM tc_common_code
+					WHERE 1 = 1 
+		]]>
+					<if test='cd_grp_id != null and cd_grp_id != ""'>AND cd_grp_id = #{cd_grp_id}</if>
+					<if test='cd_id != null and cd_id != ""'> AND cd_id = #{cd_id}</if>
+					<if test='cd_nm != null and cd_nm != ""'> AND cd_nm = #{cd_nm}</if>
+					<if test='cd_lvl != null and cd_lvl != ""'> AND cd_lvl = #{cd_lvl}</if>
+					<if test='cd_add_itm != null and cd_add_itm != ""'> AND cd_add_itm = #{cd_add_itm}</if>
+					<if test='cd_prn_odr != null and cd_prn_odr != ""'> AND cd_prn_odr = #{cd_prn_odr}</if>
+					<if test='description != null and description != ""'> AND description = #{description}</if>
+					<if test='use_yn != null and use_yn != ""'> AND use_yn = #{use_yn}</if>
+					<if test='regist_date != null and regist_date != ""'> AND regist_date = #{regist_date}</if>
+					<if test='regist_id != null and regist_id != ""'> AND regist_id = #{regist_id}</if>
+					<if test='update_date != null and update_date != ""'> AND update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND update_id = #{update_id}</if>
+		<![CDATA[
+					ORDER BY cd_grp_id,cd_prn_odr,update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countCommonCode" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tc_common_code
+			WHERE 1 = 1 
+		]]>
+		<if test='cd_grp_id != null and cd_grp_id != ""'>AND cd_grp_id = #{cd_grp_id}</if>
+		<if test='cd_id != null and cd_id != ""'>AND cd_id = #{cd_id}</if>
+		<if test='cd_nm != null and cd_nm != ""'>AND cd_nm = #{cd_nm}</if>
+		<if test='cd_lvl != null and cd_lvl != ""'>AND cd_lvl = #{cd_lvl}</if>
+		<if test='cd_add_itm != null and cd_add_itm != ""'>AND cd_add_itm = #{cd_add_itm}</if>
+		<if test='cd_prn_odr != null and cd_prn_odr != ""'>AND cd_prn_odr = #{cd_prn_odr}</if>
+		<if test='description != null and description != ""'>AND description = #{description}</if>
+		<if test='use_yn != null and use_yn != ""'>AND use_yn = #{use_yn}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+</mapper>

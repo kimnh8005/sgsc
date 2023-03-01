@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.RiskAnyLoadDAO">
+
+	<insert id="insertThAcdntScnrsAnayLoadMin">
+		<![CDATA[
+			insert into th_acdnt_scnrs_anay_load_min (
+				anys_ymdhi,
+				scen_id,
+				anys_type_cd,
+				factory_hrrc_cd,
+				factory_id,
+				anys_sys_cd,
+				risk_step_cd,
+				risk_num,
+				risk_unit
+			) values (
+				#{anys_ymdhi},
+				#{scen_id},
+				#{anys_type_cd},
+				#{factory_hrrc_cd},
+				#{factory_id},
+				#{anys_sys_cd},
+				#{risk_step_cd},
+				#{risk_num},
+				#{risk_unit}
+			)
+		]]>
+	</insert>
+	
+	<insert id="insertThAcdntScnrsAnayLoadHourly">
+		<![CDATA[
+			insert into th_acdnt_scnrs_anay_load_hourly (
+				anys_ymdh,
+				scen_id,
+				anys_type_cd,
+				factory_hrrc_cd,
+				factory_id,
+				anys_sys_cd,
+				risk_step_cd,
+				risk_num,
+				risk_unit
+			) values (
+				#{anys_ymdh},
+				#{scen_id},
+				#{anys_type_cd},
+				#{factory_hrrc_cd},
+				#{factory_id},
+				#{anys_sys_cd},
+				#{risk_step_cd},
+				#{risk_num},
+				#{risk_unit}
+			)
+		]]>
+	</insert>
+	
+
+	<insert id="insertThAcdntScnrsAnayLoadDaily">
+		<![CDATA[
+			insert into th_acdnt_scnrs_anay_load_daily (
+				anys_ymd,
+				scen_id,
+				anys_type_cd,
+				factory_hrrc_cd,
+				factory_id,
+				anys_sys_cd,
+				risk_step_cd,
+				risk_num,
+				risk_unit
+			) values (
+				#{anys_ymd},
+				#{scen_id},
+				#{anys_type_cd},
+				#{factory_hrrc_cd},
+				#{factory_id},
+				#{anys_sys_cd},
+				#{risk_step_cd},
+				#{risk_num},
+				#{risk_unit}
+			)
+		]]>
+	</insert>
+
+
+</mapper>

@@ -1,0 +1,190 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.ScrnAuthDAO">
+
+	<insert id="insertScrnAuth">
+		<![CDATA[
+			INSERT INTO tb_scrn_auth (
+				scrn_id
+				,scrn_nm
+				,scrn_path
+				,read_auth_sid
+				,modify_auth_sid
+				,create_auth_sid
+				,del_auth_sid
+				,use_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			) VALUES (
+				#{scrn_id}
+				,#{scrn_nm}
+				,#{scrn_path}
+				,#{read_auth_sid}
+				,#{modify_auth_sid}
+				,#{create_auth_sid}
+				,#{del_auth_sid}
+				,#{use_yn}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regist_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+			)
+		]]>
+	</insert> 
+
+	<select id="getScrnAuthKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(scrn_id,2)),0) +1  ,9,'0'))
+			FROM tb_scrn_auth
+		]]>
+	</select>
+
+	<delete id="deleteScrnAuth">
+		<![CDATA[
+			DELETE FROM tb_scrn_auth
+			WHERE scrn_id = #{scrn_id}
+		]]>
+	</delete>
+
+	<update id="updateScrnAuth">
+		<![CDATA[
+			UPDATE tb_scrn_auth
+			SET
+		]]>
+			<if test='scrn_id != null and scrn_id != ""'>scrn_id = #{scrn_id}</if>
+			<if test='scrn_nm != null and scrn_nm != ""'>,scrn_nm = #{scrn_nm}</if>
+			<if test='scrn_path != null and scrn_path != ""'>,scrn_path = #{scrn_path}</if>
+			<if test='read_auth_sid != null and read_auth_sid != ""'>,read_auth_sid = #{read_auth_sid}</if>
+			<if test='modify_auth_sid != null and modify_auth_sid != ""'>,modify_auth_sid = #{modify_auth_sid}</if>
+			<if test='create_auth_sid != null and create_auth_sid != ""'>,create_auth_sid = #{create_auth_sid}</if>
+			<if test='del_auth_sid != null and del_auth_sid != ""'>,del_auth_sid = #{del_auth_sid}</if>
+			<if test='use_yn != null and use_yn != ""'>,use_yn = #{use_yn}</if>
+			 ,regist_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='regist_id != null and regist_id != ""'>,regist_id = #{regist_id}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+		<![CDATA[
+			WHERE scrn_id = #{scrn_id}
+		]]>
+	</update>
+
+	<select id="getScrnAuth_scrn_id" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				scrn_id
+				,scrn_nm
+				,scrn_path
+				,read_auth_sid
+				,modify_auth_sid
+				,create_auth_sid
+				,del_auth_sid
+				,use_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			FROM tb_scrn_auth
+			WHERE scrn_id = #{scrn_id}
+		]]>
+	</select>
+
+	<select id="listScrnAuth" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				scrn_id
+				,scrn_nm
+				,scrn_path
+				,read_auth_sid
+				,modify_auth_sid
+				,create_auth_sid
+				,del_auth_sid
+				,use_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			FROM tb_scrn_auth
+			WHERE 1=1
+		]]>
+		<if test='scrn_id != null and scrn_id != ""'>AND scrn_id = #{scrn_id}</if>
+		<if test='scrn_nm != null and scrn_nm != ""'>AND scrn_nm = #{scrn_nm}</if>
+		<if test='scrn_path != null and scrn_path != ""'>AND scrn_path = #{scrn_path}</if>
+		<if test='read_auth_sid != null and read_auth_sid != ""'>AND read_auth_sid = #{read_auth_sid}</if>
+		<if test='modify_auth_sid != null and modify_auth_sid != ""'>AND modify_auth_sid = #{modify_auth_sid}</if>
+		<if test='create_auth_sid != null and create_auth_sid != ""'>AND create_auth_sid = #{create_auth_sid}</if>
+		<if test='del_auth_sid != null and del_auth_sid != ""'>AND del_auth_sid = #{del_auth_sid}</if>
+		<if test='use_yn != null and use_yn != ""'>AND use_yn = #{use_yn}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+
+	<select id="pageScrnAuth" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						scrn_id
+						,scrn_nm
+						,scrn_path
+						,read_auth_sid
+						,modify_auth_sid
+						,create_auth_sid
+						,del_auth_sid
+						,use_yn
+						,regist_date
+						,regist_id
+						,update_date
+						,update_id
+					FROM tb_scrn_auth
+					WHERE 1 = 1 
+		]]>
+					<if test='scrn_id != null and scrn_id != ""'> AND scrn_id = #{scrn_id}</if>
+					<if test='scrn_nm != null and scrn_nm != ""'> AND scrn_nm = #{scrn_nm}</if>
+					<if test='scrn_path != null and scrn_path != ""'> AND scrn_path = #{scrn_path}</if>
+					<if test='read_auth_sid != null and read_auth_sid != ""'> AND read_auth_sid = #{read_auth_sid}</if>
+					<if test='modify_auth_sid != null and modify_auth_sid != ""'> AND modify_auth_sid = #{modify_auth_sid}</if>
+					<if test='create_auth_sid != null and create_auth_sid != ""'> AND create_auth_sid = #{create_auth_sid}</if>
+					<if test='del_auth_sid != null and del_auth_sid != ""'> AND del_auth_sid = #{del_auth_sid}</if>
+					<if test='use_yn != null and use_yn != ""'> AND use_yn = #{use_yn}</if>
+					<if test='regist_date != null and regist_date != ""'> AND regist_date = #{regist_date}</if>
+					<if test='regist_id != null and regist_id != ""'> AND regist_id = #{regist_id}</if>
+					<if test='update_date != null and update_date != ""'> AND update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND update_id = #{update_id}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countScrnAuth" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tb_scrn_auth
+			WHERE 1 = 1 
+		]]>
+		<if test='scrn_id != null and scrn_id != ""'>AND scrn_id = #{scrn_id}</if>
+		<if test='scrn_nm != null and scrn_nm != ""'>AND scrn_nm = #{scrn_nm}</if>
+		<if test='scrn_path != null and scrn_path != ""'>AND scrn_path = #{scrn_path}</if>
+		<if test='read_auth_sid != null and read_auth_sid != ""'>AND read_auth_sid = #{read_auth_sid}</if>
+		<if test='modify_auth_sid != null and modify_auth_sid != ""'>AND modify_auth_sid = #{modify_auth_sid}</if>
+		<if test='create_auth_sid != null and create_auth_sid != ""'>AND create_auth_sid = #{create_auth_sid}</if>
+		<if test='del_auth_sid != null and del_auth_sid != ""'>AND del_auth_sid = #{del_auth_sid}</if>
+		<if test='use_yn != null and use_yn != ""'>AND use_yn = #{use_yn}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+</mapper>

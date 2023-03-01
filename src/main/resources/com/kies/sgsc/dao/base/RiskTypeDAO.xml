@@ -1,0 +1,213 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.RiskTypeDAO">
+
+	<insert id="insertRiskType">
+		<![CDATA[
+			INSERT INTO tc_risk_type (
+				risk_type_id
+				,anys_sys_cd
+				,risk_cls_cd
+				,risk_type_nm
+				,unit
+				,use_yn
+				,trhld_ptn_cd
+				,risk_desc
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,default_val
+				,grp_cal_cd
+			) VALUES (
+				#{risk_type_id}
+				,#{anys_sys_cd}
+				,#{risk_cls_cd}
+				,#{risk_type_nm}
+				,#{unit}
+				,#{use_yn}
+				,#{trhld_ptn_cd}
+				,#{risk_desc}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regist_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+				,#{default_val}
+				,#{grp_cal_cd}
+			)
+		]]>
+	</insert> 
+
+	<select id="getRiskTypeKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(risk_type_id,2)),0) +1  ,9,'0'))
+			FROM tc_risk_type
+		]]>
+	</select>
+
+	<delete id="deleteRiskType">
+		<![CDATA[
+			DELETE FROM tc_risk_type
+			WHERE risk_type_id = #{risk_type_id}
+		]]>
+	</delete>
+
+	<update id="updateRiskType">
+		<![CDATA[
+			UPDATE tc_risk_type
+			SET
+		]]>
+			<if test='risk_type_id != null and risk_type_id != ""'>risk_type_id = #{risk_type_id}</if>
+			<if test='anys_sys_cd != null and anys_sys_cd != ""'>,anys_sys_cd = #{anys_sys_cd}</if>
+			<if test='risk_cls_cd != null and risk_cls_cd != ""'>,risk_cls_cd = #{risk_cls_cd}</if>
+			<if test='risk_type_nm != null and risk_type_nm != ""'>,risk_type_nm = #{risk_type_nm}</if>
+			<if test='unit != null and unit != ""'>,unit = #{unit}</if>
+			<if test='use_yn != null and use_yn != ""'>,use_yn = #{use_yn}</if>
+			<if test='trhld_ptn_cd != null and trhld_ptn_cd != ""'>,trhld_ptn_cd = #{trhld_ptn_cd}</if>
+			<if test='risk_desc != null and risk_desc != ""'>,risk_desc = #{risk_desc}</if>
+			 ,regist_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='regist_id != null and regist_id != ""'>,regist_id = #{regist_id}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+			<if test='default_val != null and default_val != ""'>,default_val = #{default_val}</if>
+			<if test='grp_cal_cd != null and grp_cal_cd != ""'>,grp_cal_cd = #{grp_cal_cd}</if>
+		<![CDATA[
+			WHERE risk_type_id = #{risk_type_id}
+		]]>
+	</update>
+
+	<select id="getRiskType_risk_type_id" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				risk_type_id
+				,anys_sys_cd
+				,risk_cls_cd
+				,risk_type_nm
+				,unit
+				,use_yn
+				,trhld_ptn_cd
+				,risk_desc
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,default_val
+				,grp_cal_cd
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='ANYS_SYS_CD' AND t.cd_id = a.anys_sys_cd) anys_sys_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='RISK_CLS_CD' AND t.cd_id = a.risk_cls_cd) risk_cls_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='TRHLD_PTN_CD' AND t.cd_id = a.trhld_ptn_cd) trhld_ptn_nm
+			FROM tc_risk_type a
+			WHERE risk_type_id = #{risk_type_id}
+		]]>
+	</select>
+
+	<select id="listRiskType" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				risk_type_id
+				,anys_sys_cd
+				,risk_cls_cd
+				,risk_type_nm
+				,unit
+				,use_yn
+				,trhld_ptn_cd
+				,risk_desc
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+				,default_val
+				,grp_cal_cd
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='ANYS_SYS_CD' AND t.cd_id = a.anys_sys_cd) anys_sys_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='RISK_CLS_CD' AND t.cd_id = a.risk_cls_cd) risk_cls_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='TRHLD_PTN_CD' AND t.cd_id = a.trhld_ptn_cd) trhld_ptn_nm
+			FROM tc_risk_type a
+			WHERE 1=1
+		]]>
+		<if test='risk_type_id != null and risk_type_id != ""'>AND risk_type_id = #{risk_type_id}</if>
+		<if test='anys_sys_cd != null and anys_sys_cd != ""'>AND anys_sys_cd = #{anys_sys_cd}</if>
+		<if test='risk_cls_cd != null and risk_cls_cd != ""'>AND risk_cls_cd = #{risk_cls_cd}</if>
+		<if test='risk_cls_cds != null and risk_cls_cds != ""'>AND risk_cls_cd in ( ${risk_cls_cds})</if>
+		
+		<if test='risk_type_nm != null and risk_type_nm != ""'>AND risk_type_nm = #{risk_type_nm}</if>
+		<if test='unit != null and unit != ""'>AND unit = #{unit}</if>
+		<if test='use_yn != null and use_yn != ""'>AND use_yn = #{use_yn}</if>
+		<if test='trhld_ptn_cd != null and trhld_ptn_cd != ""'>AND trhld_ptn_cd = #{trhld_ptn_cd}</if>
+		<if test='risk_desc != null and risk_desc != ""'>AND risk_desc = #{risk_desc}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+
+	<select id="pageRiskType" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						risk_type_id
+						,anys_sys_cd
+						,risk_cls_cd
+						,risk_type_nm
+						,unit
+						,use_yn
+						,trhld_ptn_cd
+						,risk_desc
+						,regist_date
+						,regist_id
+						,update_date
+						,update_id
+						,default_val
+						,grp_cal_cd
+						,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='ANYS_SYS_CD' AND t.cd_id = a.anys_sys_cd) anys_sys_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='RISK_CLS_CD' AND t.cd_id = a.risk_cls_cd) risk_cls_nm
+				,(SELECT t.cd_nm FROM tc_common_code t WHERE t.cd_grp_id='TRHLD_PTN_CD' AND t.cd_id = a.trhld_ptn_cd) trhld_ptn_nm
+					FROM tc_risk_type a
+					WHERE 1 = 1 
+		]]>
+					<if test='risk_type_id != null and risk_type_id != ""'> AND risk_type_id = #{risk_type_id}</if>
+					<if test='anys_sys_cd != null and anys_sys_cd != ""'> AND anys_sys_cd = #{anys_sys_cd}</if>
+					<if test='risk_cls_cd != null and risk_cls_cd != ""'> AND risk_cls_cd = #{risk_cls_cd}</if>
+					<if test='risk_type_nm != null and risk_type_nm != ""'> AND risk_type_nm = #{risk_type_nm}</if>
+					<if test='unit != null and unit != ""'> AND unit = #{unit}</if>
+					<if test='use_yn != null and use_yn != ""'> AND use_yn = #{use_yn}</if>
+					<if test='trhld_ptn_cd != null and trhld_ptn_cd != ""'> AND trhld_ptn_cd = #{trhld_ptn_cd}</if>
+					<if test='risk_desc != null and risk_desc != ""'> AND risk_desc = #{risk_desc}</if>
+					<if test='regist_date != null and regist_date != ""'> AND regist_date = #{regist_date}</if>
+					<if test='regist_id != null and regist_id != ""'> AND regist_id = #{regist_id}</if>
+					<if test='update_date != null and update_date != ""'> AND update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND update_id = #{update_id}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countRiskType" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tc_risk_type
+			WHERE 1 = 1 
+		]]>
+		<if test='risk_type_id != null and risk_type_id != ""'>AND risk_type_id = #{risk_type_id}</if>
+		<if test='anys_sys_cd != null and anys_sys_cd != ""'>AND anys_sys_cd = #{anys_sys_cd}</if>
+		<if test='risk_cls_cd != null and risk_cls_cd != ""'>AND risk_cls_cd = #{risk_cls_cd}</if>
+		<if test='risk_type_nm != null and risk_type_nm != ""'>AND risk_type_nm = #{risk_type_nm}</if>
+		<if test='unit != null and unit != ""'>AND unit = #{unit}</if>
+		<if test='use_yn != null and use_yn != ""'>AND use_yn = #{use_yn}</if>
+		<if test='trhld_ptn_cd != null and trhld_ptn_cd != ""'>AND trhld_ptn_cd = #{trhld_ptn_cd}</if>
+		<if test='risk_desc != null and risk_desc != ""'>AND risk_desc = #{risk_desc}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+</mapper>

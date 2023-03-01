@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.kies.sgsc.dao.base.AuthDAO">
+
+	<insert id="insertAuth">
+		<![CDATA[
+			INSERT INTO tb_auth (
+				auth_sid
+				,auth_nm
+				,auth_difcy
+				,use_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			) VALUES (
+				#{auth_sid}
+				,#{auth_nm}
+				,#{auth_difcy}
+				,#{use_yn}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{regist_id}
+				,DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+				,#{update_id}
+			)
+		]]>
+	</insert> 
+
+	<select id="getAuthKey" resultType="string">
+		<![CDATA[
+			SELECT
+				CONCAT('N',LPAD(ifnull(MAX(substr(auth_sid,2)),0) +1  ,9,'0'))
+			FROM tb_auth
+		]]>
+	</select>
+
+	<delete id="deleteAuth">
+		<![CDATA[
+			DELETE FROM tb_auth
+			WHERE auth_sid = #{auth_sid}
+		]]>
+	</delete>
+
+	<update id="updateAuth">
+		<![CDATA[
+			UPDATE tb_auth
+			SET
+		]]>
+			<if test='auth_sid != null and auth_sid != ""'>auth_sid = #{auth_sid}</if>
+			<if test='auth_nm != null and auth_nm != ""'>,auth_nm = #{auth_nm}</if>
+			<if test='auth_difcy != null and auth_difcy != ""'>,auth_difcy = #{auth_difcy}</if>
+			<if test='use_yn != null and use_yn != ""'>,use_yn = #{use_yn}</if>
+			 ,regist_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='regist_id != null and regist_id != ""'>,regist_id = #{regist_id}</if>
+			 ,update_date = DATE_FORMAT(NOW(), '%Y%m%d%H%i%s')
+			<if test='update_id != null and update_id != ""'>,update_id = #{update_id}</if>
+		<![CDATA[
+			WHERE auth_sid = #{auth_sid}
+		]]>
+	</update>
+
+	<select id="getAuth_auth_sid" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				auth_sid
+				,auth_nm
+				,auth_difcy
+				,use_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			FROM tb_auth
+			WHERE auth_sid = #{auth_sid}
+		]]>
+	</select>
+
+	<select id="listAuth" resultType="hashmap">
+		<![CDATA[
+			SELECT
+				auth_sid
+				,auth_nm
+				,auth_difcy
+				,use_yn
+				,regist_date
+				,regist_id
+				,update_date
+				,update_id
+			FROM tb_auth
+			WHERE 1=1
+		]]>
+		<if test='auth_sid != null and auth_sid != ""'>AND auth_sid = #{auth_sid}</if>
+		<if test='auth_nm != null and auth_nm != ""'>AND auth_nm = #{auth_nm}</if>
+		<if test='auth_difcy != null and auth_difcy != ""'>AND auth_difcy = #{auth_difcy}</if>
+		<if test='use_yn != null and use_yn != ""'>AND use_yn = #{use_yn}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+
+	<select id="pageAuth" resultType="hashmap">
+		<![CDATA[
+			SELECT * FROM ( 
+				SELECT 
+					@rownum:=@rownum+1 RO, 
+					A.* 
+				FROM 
+				(
+					SELECT
+						auth_sid
+						,auth_nm
+						,auth_difcy
+						,use_yn
+						,regist_date
+						,regist_id
+						,update_date
+						,update_id
+					FROM tb_auth
+					WHERE 1 = 1 
+		]]>
+					<if test='auth_sid != null and auth_sid != ""'> AND auth_sid = #{auth_sid}</if>
+					<if test='auth_nm != null and auth_nm != ""'> AND auth_nm = #{auth_nm}</if>
+					<if test='auth_difcy != null and auth_difcy != ""'> AND auth_difcy = #{auth_difcy}</if>
+					<if test='use_yn != null and use_yn != ""'> AND use_yn = #{use_yn}</if>
+					<if test='regist_date != null and regist_date != ""'> AND regist_date = #{regist_date}</if>
+					<if test='regist_id != null and regist_id != ""'> AND regist_id = #{regist_id}</if>
+					<if test='update_date != null and update_date != ""'> AND update_date = #{update_date}</if>
+					<if test='update_id != null and update_id != ""'> AND update_id = #{update_id}</if>
+		<![CDATA[
+					ORDER BY update_date DESC
+				) A,
+				(SELECT @rownum:=0) TMP
+			) A
+			LIMIT  ${startRow},${endRow}
+		]]>
+	</select>
+
+	<select id="countAuth" resultType="int">
+		<![CDATA[
+			SELECT count(1)  
+			FROM tb_auth
+			WHERE 1 = 1 
+		]]>
+		<if test='auth_sid != null and auth_sid != ""'>AND auth_sid = #{auth_sid}</if>
+		<if test='auth_nm != null and auth_nm != ""'>AND auth_nm = #{auth_nm}</if>
+		<if test='auth_difcy != null and auth_difcy != ""'>AND auth_difcy = #{auth_difcy}</if>
+		<if test='use_yn != null and use_yn != ""'>AND use_yn = #{use_yn}</if>
+		<if test='regist_date != null and regist_date != ""'>AND regist_date = #{regist_date}</if>
+		<if test='regist_id != null and regist_id != ""'>AND regist_id = #{regist_id}</if>
+		<if test='update_date != null and update_date != ""'>AND update_date = #{update_date}</if>
+		<if test='update_id != null and update_id != ""'>AND update_id = #{update_id}</if>
+	</select>
+</mapper>

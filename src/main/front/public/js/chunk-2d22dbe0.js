@@ -1,0 +1,2 @@
+(window["webpackJsonp"]=window["webpackJsonp"]||[]).push([["chunk-2d22dbe0"],{f990:function(e,n,t){"use strict";t.r(n);var a=function(){var e=this,n=e.$createElement,t=e._self._c||n;return t("div",[t("PageTitle")],1)},o=[],c=t("25b9"),i={name:"SensorMonitoring",components:{PageTitle:c["a"]}},r=i,s=t("2877"),l=Object(s["a"])(r,a,o,!1,null,"6b46cabf",null);n["default"]=l.exports}}]);
+//# sourceMappingURL=chunk-2d22dbe0.js.map
